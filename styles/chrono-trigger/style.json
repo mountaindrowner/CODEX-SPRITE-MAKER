@@ -1,0 +1,19 @@
+{
+  "name": "chrono-trigger",
+  "palette": "palette.json",
+  "frame_size": [32, 48],
+  "max_colors": 12,
+  "view": "top-down 3/4",
+  "light": "from top",
+  "directions": ["down", "up", "left", "right"],
+  "mirror": { "right": "left" },
+  "walk": {
+    "distinct_frames_per_direction": 3,
+    "frame_roles": ["neutral", "step_left", "step_right"],
+    "play_order": [0, 1, 0, 2],
+    "fps": 6
+  },
+  "require_outline": true,
+  "outline_color": "outline",
+  "notes": "Chrono Trigger (SNES) look: taller, less-chibi proportions built on a stick-figure skeleton with a smaller head-to-body ratio than Pokemon (more room for costuming and limb posing). Native frame 32x48; the average human is ~32px tall. ~12 colours per sprite (under the SNES 16-colour cap). Colored line work, NOT pure black: the outline is a darker shade of each material it borders (e.g. dark red/brown for hair, costume-specific darks elsewhere), which makes the sprite read as rich and vibrant. ~2-3 values per material (skin uses base+shade; hair often steps 3-4 colours). Occasional bright white highlights on reflective or attention-worthy bits (gloves, boots, metal, and the odd skin dot at shoulder/knee). Spiky dramatic hair assembled from a mosaic of triangle shapes is the dominant silhouette feature; prominent cuffs and small details (wristbands, straps, belts) are worth keeping even at 2-3px. A soft drop-shadow ellipse sits under the feet. right-facing frames are the horizontal mirror of left-facing."
+}
