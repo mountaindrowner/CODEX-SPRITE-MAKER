@@ -12,6 +12,7 @@
     "tunic_light": "#50d0e8",
     "tunic_trim": "#f88800",
     "pants": "#a8a870",
-    "boots": "#b80038"
+    "boots": "#b80038",
+    "highlight": "#f8f8f8"
   }
 }

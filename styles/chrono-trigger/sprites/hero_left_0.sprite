@@ -14,6 +14,7 @@ legend:
   j: tunic_trim
   k: pants
   m: boots
+  n: highlight
 grid: |
   ................................
   ................................
