@@ -21,7 +21,7 @@ import json
 from pathlib import Path
 
 from .grid import Grid
-from .palette import TRANSPARENT, Palette
+from .palette import TRANSPARENT, Palette, resolve_palette
 
 
 class Style:
@@ -42,10 +42,18 @@ class Style:
     def palette(self) -> Palette:
         return Palette.load(self.palette_path)
 
-    def lint(self, grid: Grid) -> list[str]:
-        """Return a list of human-readable issues; empty means the grid passes."""
+    def lint(self, grid: Grid, root: str | Path | None = None) -> list[str]:
+        """Return a list of human-readable issues; empty means the grid passes.
+
+        The colour-membership check uses the grid's *own* declared palette (so a
+        style can host multiple characters with different palettes); the style
+        still enforces frame size, colour count, and the outline requirement.
+        """
         issues: list[str] = []
-        palette = self.palette()
+        try:
+            palette = resolve_palette(grid.palette, root or Path.cwd())
+        except FileNotFoundError:
+            palette = self.palette()
 
         fs = self.data.get("frame_size")
         if fs and (grid.width, grid.height) != tuple(fs):

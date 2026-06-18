@@ -60,6 +60,20 @@ def test_render_import_diff_is_pixel_perfect():
                 assert ca == cb, f"mismatch at {(x, y)}: {ca} != {cb}"
 
 
+def test_lint_resolves_grids_own_palette():
+    """A style can host multiple characters: lint must validate each grid against
+    its OWN declared palette, not the style's default palette."""
+    from spritekit.rules import Style
+
+    style_path = Path("styles/chrono-trigger/style.json")
+    kael_path = Path("styles/chrono-trigger/sprites/kael_down_0.sprite")
+    if not (style_path.exists() and kael_path.exists()):
+        return  # repo assets not present; skip
+    style = Style.load(style_path)  # style's own palette.json = Crono's colours
+    kael = Grid.load(kael_path)  # declares palette: kael (different colours)
+    assert style.lint(kael, root=".") == []
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

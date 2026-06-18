@@ -18,26 +18,18 @@ from pathlib import Path
 from .anim import build_gif
 from .grid import Grid
 from .importer import import_sheet
-from .palette import TRANSPARENT, Palette
+from .palette import TRANSPARENT, Palette, resolve_palette
 from .render import render_grid, render_to_png
 from .rules import Style
 from .sheet import save_sheet
 
 
 def _resolve_palette(grid: Grid, explicit: str | None, search_root: Path) -> Palette:
-    """Find a palette: explicit path wins; else styles/<name>/palette.json."""
-    if explicit:
-        return Palette.load(explicit)
-    candidates = [
-        search_root / "styles" / grid.palette / "palette.json",
-        search_root / grid.palette,
-    ]
-    for c in candidates:
-        if c.exists():
-            return Palette.load(c)
-    raise SystemExit(
-        f"could not find palette {grid.palette!r}; pass --palette PATH"
-    )
+    """Find a palette: explicit path wins; else resolve the grid's declared name."""
+    try:
+        return resolve_palette(grid.palette, search_root, explicit)
+    except FileNotFoundError as e:
+        raise SystemExit(str(e))
 
 
 def cmd_render(args) -> int:

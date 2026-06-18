@@ -75,3 +75,35 @@ class Palette:
         if best is None:
             raise ValueError(f"palette {self.name!r} has no opaque colours")
         return best
+
+
+def resolve_palette(
+    ref: str, root: str | Path | None = None, explicit: str | None = None
+) -> Palette:
+    """Resolve a palette by name or path.
+
+    Resolution order:
+      1. ``explicit`` path, if given.
+      2. ``ref`` as a direct ``.json`` path that exists.
+      3. ``styles/<ref>/palette.json`` under ``root``.
+      4. recursive search under ``styles/`` for ``<ref>-palette.json`` then ``<ref>.json``.
+
+    This lets a single style host several characters, each declaring its own
+    palette (e.g. ``palette: kael`` -> ``styles/chrono-trigger/kael-palette.json``).
+    """
+    root = Path(root or Path.cwd())
+    if explicit:
+        return Palette.load(explicit)
+    p = Path(ref)
+    if p.suffix == ".json" and p.exists():
+        return Palette.load(p)
+    cand = root / "styles" / ref / "palette.json"
+    if cand.exists():
+        return Palette.load(cand)
+    styles = root / "styles"
+    if styles.exists():
+        for pattern in (f"{ref}-palette.json", f"{ref}.json"):
+            matches = sorted(styles.rglob(pattern))
+            if matches:
+                return Palette.load(matches[0])
+    raise FileNotFoundError(f"could not resolve palette {ref!r}; pass --palette PATH")

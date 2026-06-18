@@ -1,0 +1,18 @@
+{
+  "name": "kael",
+  "colors": {
+    "transparent": null,
+    "outline": "#1a1426",
+    "hair": "#3a5bd0",
+    "hair_light": "#6f93f2",
+    "hair_shadow": "#21307a",
+    "skin": "#f0c49a",
+    "skin_shadow": "#c68a63",
+    "tunic": "#b83040",
+    "tunic_shadow": "#7a1f2c",
+    "trim": "#c8cdd8",
+    "trousers": "#555a66",
+    "trousers_shadow": "#383c48",
+    "boots": "#6b4a2e"
+  }
+}

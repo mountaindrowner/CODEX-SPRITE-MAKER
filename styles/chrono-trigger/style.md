@@ -4,6 +4,14 @@ A taller, less-chibi RPG sprite style modelled on the SNES classic *Chrono
 Trigger*. Rules distilled from the master guide's Chrono Trigger section and from
 the rendered study of the official Crono walking sheet (`sprites/_crono_study.png`).
 
+**Characters in this style:** the emulated **Crono** (`sprites/hero_*`, palette
+`palette.json`) and an **original** character, **Kael, a blue-spiky swordmage**
+(`sprites/kael_*`, palette `kael-palette.json`) — proof of the "generate" step:
+a hand-authored cobalt-haired, crimson-tunic swordmage built on the CT skeleton,
+4-direction walk, reviewed and revised against critic feedback (real leg stride,
+trouser shadow value, foot shadow on every frame). Each character carries its own
+≤12-colour palette; `lint` validates a sprite against its own declared palette.
+
 ## Canvas & proportions
 - **32×48** pixels per frame. A standard human stands ~32px tall in the body;
   the extra canvas gives headroom for the **spiky hair** and the drop shadow.
