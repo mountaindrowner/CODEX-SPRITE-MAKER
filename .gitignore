@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# throwaway render/preview scratch files
+sprites/_*.png
+sprites/_*.json

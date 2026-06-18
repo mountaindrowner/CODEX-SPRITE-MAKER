@@ -1,0 +1,35 @@
+name: hero_right_0
+size: 16x16
+palette: pokemon-overworld
+legend:
+  .: transparent
+  o: outline
+  s: skin
+  a: skin_shadow
+  c: cap
+  l: cap_light
+  d: cap_shadow
+  h: hair
+  t: shirt
+  u: shirt_shadow
+  p: pants
+  q: pants_shadow
+  b: shoes
+  e: shoes_shadow
+grid: |
+  ......oooo......
+  ....occccllo....
+  ...odcccccclo...
+  ...odccccccco...
+  ..occcccccccco..
+  ..odddddddddddo.
+  .....ohhhsssso..
+  .....ohhhsaoso..
+  ......ohhaasso..
+  ....ottttttto...
+  ...otttuutttso..
+  ...otuuuuuuto...
+  ....oppqqpppo...
+  ......oppppo....
+  ......obbbbo....
+  .......eeee.....

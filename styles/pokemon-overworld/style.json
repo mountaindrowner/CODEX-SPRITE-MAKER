@@ -1,0 +1,19 @@
+{
+  "name": "pokemon-overworld",
+  "palette": "palette.json",
+  "frame_size": [16, 16],
+  "max_colors": 16,
+  "view": "top-down 3/4",
+  "light": "from top",
+  "directions": ["down", "up", "left", "right"],
+  "mirror": { "right": "left" },
+  "walk": {
+    "distinct_frames_per_direction": 3,
+    "frame_roles": ["neutral", "step_left", "step_right"],
+    "play_order": [0, 1, 0, 2],
+    "fps": 6
+  },
+  "require_outline": true,
+  "outline_color": "outline",
+  "notes": "Chibi big-head proportions; the cap is the dominant silhouette feature. ~3 values per material (base/shadow + occasional highlight). Dark colored outline, not pure black. right-facing frames are the horizontal mirror of left-facing."
+}
