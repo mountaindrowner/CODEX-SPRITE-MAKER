@@ -4,3 +4,4 @@ __pycache__/
 # throwaway render/preview scratch files
 sprites/_*.png
 sprites/_*.json
+sprites/_*.gif

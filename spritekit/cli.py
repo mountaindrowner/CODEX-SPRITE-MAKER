@@ -57,6 +57,9 @@ def cmd_import(args) -> int:
     nw, nh = (int(v) for v in args.native.lower().split("x"))
     cols, rows = (int(v) for v in args.grid.lower().split("x"))
     bg = tuple(int(v) for v in args.bg.split(","))
+    # --snap: import directly into a provided semantic palette (each native pixel
+    # snaps to the nearest named colour), instead of auto-generating one.
+    snap = Palette.load(args.snap) if args.snap else None
     palette, results = import_sheet(
         args.image,
         nw,
@@ -68,6 +71,7 @@ def cmd_import(args) -> int:
         bg=bg,  # type: ignore[arg-type]
         bg_tol=args.bg_tol,
         merge_tol=args.merge_tol,
+        palette=snap,
     )
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -187,6 +191,7 @@ def build_parser() -> argparse.ArgumentParser:
     im.add_argument("--bg", default="255,255,255", help="background RGB to treat as transparent")
     im.add_argument("--bg-tol", type=int, default=32)
     im.add_argument("--merge-tol", type=int, default=40)
+    im.add_argument("--snap", help="snap pixels to this palette.json instead of generating one")
     im.add_argument("--out", required=True, help="output directory")
     im.add_argument("--palette-out", help="palette.json output path")
     im.set_defaults(func=cmd_import)

@@ -38,8 +38,8 @@ python3 -m spritekit.cli gif   FRAME...  --out walk.gif --fps 6
 
 - `spritekit/` — the toolkit (`render`, `import`, `diff`, `lint`, `mirror`, `sheet`, `gif`).
 - `styles/pokemon-overworld/` — the first locked style: palette, machine rules
-  (`style.json`), readable rules (`style.md`), the imported reference, and a
-  complete original character with a 4-direction walk cycle.
+  (`style.json`), readable rules (`style.md`), the [anatomical study](styles/pokemon-overworld/comparison.md),
+  the imported reference + clean recreations, and a 4-direction walk cycle.
 - `sprites/` — generated output: `hero_walk_sheet.png` (+ `.coords.json`) and a
   walk GIF per direction.
 - `docs/` — the `.sprite` [grid format](docs/grid-format.md) and the
@@ -47,8 +47,10 @@ python3 -m spritekit.cli gif   FRAME...  --out walk.gif --fps 6
 - `CLAUDE.md` — how Claude should drive this repo.
 - `PIXEL ART MASTER GUIDE.pdf` — the tutorial source the style rules are distilled from.
 
-## First milestone (done)
+## Milestone (done)
 
-An original green-capped trainer rendered idle + walking in all four directions,
-assembled into a sprite sheet with recorded frame coordinates and four animated
-GIFs. See `sprites/hero_walk_sheet.png` and `sprites/hero_walk_*.gif`.
+A Pokémon "Red"-homage trainer — emulated from the official sheet, studied
+part-by-part ([`comparison.md`](styles/pokemon-overworld/comparison.md)), and
+rebuilt with rounded cap, sideburns, yellow hip bag, top-light shading, and a
+4-direction walk cycle (foot alternation + arm swing). See
+`sprites/hero_walk_sheet.png` and `sprites/hero_walk_*.gif`.

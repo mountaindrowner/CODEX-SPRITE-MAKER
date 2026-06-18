@@ -20,9 +20,16 @@ provided reference sheet of a red-capped trainer.
 
 ## Colour & outline
 - About **3 values per material** (base + shadow, plus an occasional highlight).
-- **Dark coloured outline**, not pure black (`#281d2b`) — a darker version of the
+- **Dark coloured outline**, not pure black (`#1b1220`) — a darker version of the
   forms it borders, which keeps the sprite vivid and integrated.
 - Keep within the palette (`palette.json`); the linter enforces `max_colors: 16`.
+- The locked palette is a **homage to the Pokémon "Red" trainer**: red cap +
+  pale bill, auburn hair, dark vest, a **yellow hip bag**, dark shorts, red shoes.
+  Materials: `cap_red/cap_light/cap_shadow`, `bill`, `skin/skin_shadow`, `hair`,
+  `vest/vest_light`, `bag_gold/bag_shadow`, `shorts`, `shoe/shoe_shadow`, `outline`.
+- The part-by-part anatomy and the official-vs-hero study live in
+  [`comparison.md`](comparison.md); clean recreations of the official are in
+  `reference/recreation/`.
 
 ## Directions & movement
 - Four facings: **down, up, left, right**.
