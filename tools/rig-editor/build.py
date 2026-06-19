@@ -8,6 +8,8 @@ import json
 import sys
 from pathlib import Path
 
+from PIL import Image
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
@@ -20,20 +22,34 @@ PAL = Palette.load(REC / "palette.json")
 HERE = Path(__file__).parent
 
 
-def data_url(grid: Grid) -> str:
+def _b64(img: Image.Image) -> str:
     buf = io.BytesIO()
-    render_grid(grid, PAL, 1).save(buf, "PNG")
+    img.save(buf, "PNG")
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
 
 
-SPRITES = [
-    ("crono down", "crono_r0_c0", "down_0"),
-    ("crono up",   "crono_r3_c0", "up_0"),
-    ("crono left", "crono_r1_c1", "left_0"),
-]
+def data_url(grid: Grid) -> str:
+    return _b64(render_grid(grid, PAL, 1))
+
 
 sprites = []
-for name, fname, pose in SPRITES:
+
+# Official Crono source pixels (the true reference): a 4x4 grid of 32x48 cells.
+src = Image.open(ROOT / "styles/chrono-trigger/reference/crono-source.png").convert("RGBA")
+OFFICIAL = [("crono down (official)", 0, 0, "down_0"),
+            ("crono up (official)",   0, 144, "up_0"),
+            ("crono left (official)", 32, 48, "left_0")]
+for name, x, y, pose in OFFICIAL:
+    cell = src.crop((x, y, x + 32, y + 48))
+    sprites.append({"name": name, "w": 32, "h": 48, "pose": pose, "src": _b64(cell)})
+
+# Clean hand-made recreations (alternates).
+RECREATIONS = [
+    ("crono down (clean)", "crono_r0_c0", "down_0"),
+    ("crono up (clean)",   "crono_r3_c0", "up_0"),
+    ("crono left (clean)", "crono_r1_c1", "left_0"),
+]
+for name, fname, pose in RECREATIONS:
     g = Grid.load(REC / f"{fname}.sprite")
     sprites.append({"name": name, "w": g.width, "h": g.height, "pose": pose, "src": data_url(g)})
 
@@ -43,3 +59,4 @@ data = {"rig": rig, "rig0": json.loads(json.dumps(rig)), "sprites": sprites}
 html = (HERE / "template.html").read_text().replace("__RIG_EDITOR_DATA__", json.dumps(data))
 (HERE / "index.html").write_text(html)
 print(f"wrote {HERE/'index.html'} ({len(html)} bytes, {len(sprites)} sprites, {len(rig['poses'])} poses)")
+
