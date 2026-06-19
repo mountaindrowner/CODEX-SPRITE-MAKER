@@ -85,8 +85,9 @@
 const DATA = __RIG_EDITOR_DATA__;
 const rig = DATA.rig;
 const targets = DATA.sprites.slice();   // {name,w,h,src,pose}
-const imgs = {};                        // pose -> HTMLImageElement
 const MARGIN = 22;
+function preload(){ targets.forEach(t=>{ if(t._img||t._loading) return; t._loading=true;
+  const im=new Image(); im.onload=()=>{ t._img=im; draw(); }; im.onerror=()=>{ t._err=true; draw(); }; im.src=t.src; }); }
 
 const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
 const sel = document.getElementById('sel'), out = document.getElementById('out');
@@ -98,20 +99,18 @@ function joints(){ return rig.poses[curPose()]; }
 
 function colLabel(n){ let s=''; n+=1; while(n){ let r=(n-1)%26; s=String.fromCharCode(65+r)+s; n=Math.floor((n-1)/26);} return s; }
 
-function loadImg(t){ return new Promise(res=>{ if(imgs[t.pose]) return res(imgs[t.pose]);
-  const im=new Image(); im.onload=()=>{imgs[t.pose]=im; res(im);}; im.src=t.src; }); }
-
 function fillSelect(){ sel.innerHTML=''; targets.forEach((t,i)=>{ const o=document.createElement('option');
   o.value=i; o.textContent=`${t.name}  (${t.w}×${t.h}, pose ${t.pose})`; sel.appendChild(o); }); sel.value=cur; }
 
-async function draw(){
-  const t=curTarget(); const im=await loadImg(t);
+function draw(){
+  const t=curTarget(); const im=t._img; preload();
   const W=MARGIN+t.w*scale, H=MARGIN+t.h*scale;
   cv.width=W; cv.height=H;
   ctx.fillStyle='#11131a'; ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#171922'; ctx.fillRect(MARGIN,MARGIN,t.w*scale,t.h*scale);
   ctx.imageSmoothingEnabled=false;
-  if(im) ctx.drawImage(im,MARGIN,MARGIN,t.w*scale,t.h*scale);
+  if(im){ ctx.drawImage(im,MARGIN,MARGIN,t.w*scale,t.h*scale); }
+  else { ctx.fillStyle='#9aa0b0'; ctx.font='12px monospace'; ctx.fillText(t._err?'(image failed — skeleton still editable)':'loading image…', MARGIN+4, MARGIN+16); }
   if(document.getElementById('grid').checked){
     ctx.strokeStyle='rgba(255,255,255,.10)'; ctx.fillStyle='#8b93a7'; ctx.font='10px monospace'; ctx.lineWidth=1;
     const step = t.w>40?4:2;
@@ -171,7 +170,7 @@ document.getElementById('addImg').onclick=()=>{ const f=document.getElementById(
   if(!f||!w||!h){ alert('choose an image and native W/H'); return; }
   const rd=new FileReader(); rd.onload=()=>{ const pose='custom_'+(targets.length);
     rig.poses[pose]=defaultPose(w,h); targets.push({name:f.name,w,h,src:rd.result,pose});
-    fillSelect(); cur=targets.length-1; sel.value=cur; selected=null; refresh(); };
+    fillSelect(); cur=targets.length-1; sel.value=cur; selected=null; preload(); refresh(); };
   rd.readAsDataURL(f); };
 
 function defaultPose(w,h){ const cx=Math.round(w/2); const Y=v=>Math.round(h*v);
@@ -181,7 +180,7 @@ function defaultPose(w,h){ const cx=Math.round(w/2); const Y=v=>Math.round(h*v);
     hip_l:[cx-2,Y(.7)], hip_r:[cx+2,Y(.7)], knee_l:[cx-2,Y(.82)], knee_r:[cx+2,Y(.82)],
     foot_l:[cx-2,Y(.95)], foot_r:[cx+2,Y(.95)] }; }
 
-fillSelect(); refresh();
+preload(); fillSelect(); refresh();
 </script>
 </body>
 </html>
