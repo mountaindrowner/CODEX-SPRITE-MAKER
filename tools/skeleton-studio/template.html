@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>spritekit · skeleton studio (p5.js)</title>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<style>
+  body{margin:0;background:#0e0f13;color:#e8e8ee;font:14px/1.45 system-ui,sans-serif}
+  header{padding:10px 14px;background:#171922;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  header b{color:#5ac8ff}
+  .wrap{display:flex;gap:14px;padding:14px;flex-wrap:wrap}
+  .side{width:320px;max-width:100%;display:flex;flex-direction:column;gap:10px}
+  .card{background:#171922;border:1px solid #262a38;border-radius:8px;padding:10px}
+  button,select,input{background:#0f1117;color:#e8e8ee;border:1px solid #2c3142;border-radius:6px;padding:6px 8px;font:inherit;cursor:pointer}
+  button.acc{background:#5ac8ff;color:#04222e;border:none;font-weight:600}
+  button.on{background:#2e6f3f;border-color:#2e6f3f}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  label{color:#9aa0b0;font-size:12px}
+  textarea{width:100%;height:200px;background:#0b0c10;color:#bfe6ff;border:1px solid #2c3142;border-radius:6px;font:12px/1.4 ui-monospace,monospace;padding:8px}
+  .hint{color:#9aa0b0;font-size:12px}
+  #holder{background:#11131a;border:1px solid #262a38;border-radius:8px;padding:8px}
+</style>
+</head>
+<body>
+<header><b>spritekit</b> · skeleton studio <span class="hint">drag joints (when paused) · play to watch the walk · flesh = preview the body</span></header>
+<div class="wrap">
+  <div id="holder"></div>
+  <div class="side">
+    <div class="card">
+      <div class="row">
+        <label>facing</label>
+        <button class="dir on" data-d="down">down</button>
+        <button class="dir" data-d="up">up</button>
+        <button class="dir" data-d="left">left</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="play" class="acc">▶ play walk</button>
+        <label>frame</label><select id="frame"><option>0</option><option>1</option><option>2</option></select>
+        <button id="flesh">flesh: off</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label>zoom</label><input id="scale" type="range" min="6" max="20" value="12">
+        <label>fps</label><input id="fps" type="range" min="2" max="12" value="6">
+      </div>
+      <div class="row" style="margin-top:8px"><span class="hint" id="status">paused · editing down_0</span></div>
+    </div>
+    <div class="card">
+      <label>overlay a reference sprite (optional)</label>
+      <div class="row" style="margin-top:6px"><input id="file" type="file" accept="image/*"></div>
+      <div class="hint">drawn behind the skeleton so you can rig onto it.</div>
+    </div>
+    <div class="card">
+      <div class="row"><button class="acc" id="copy">copy rig JSON</button><button id="dl">download</button></div>
+      <div class="hint" style="margin:6px 0">Send this back to Claude.</div>
+      <textarea id="out" spellcheck="false"></textarea>
+    </div>
+  </div>
+</div>
+<script>
+const RIG = __RIG__;
+const BODYCOL = {skin:'#f0c49a',tunic:'#b83040',trousers:'#555a66',hair:'#3a5bd0',boots:'#6b4a2e',outline:'#1a1426'};
+const WALK = [0,1,0,2];
+const MARGIN = 20;
+let dir='down', playing=false, frameSel=0, scale=12, fps=6, fleshed=false, dragging=null, ref=null;
+
+function poseName(){ if(playing){ const i=WALK[Math.floor(frameCount/Math.max(1,Math.round(60/fps)))%4]; return has(dir+'_'+i)?dir+'_'+i:dir+'_0'; }
+  return has(dir+'_'+frameSel)?dir+'_'+frameSel:dir+'_0'; }
+function has(n){ return !!RIG.poses[n]; }
+function editName(){ return has(dir+'_'+frameSel)?dir+'_'+frameSel:dir+'_0'; }
+function P(n){ return RIG.poses[poseName()][n]; }
+const sx=x=>MARGIN+(x+0.5)*scale, sy=y=>MARGIN+(y+0.5)*scale;
+
+function setup(){ const [w,h]=RIG.frame_size; const c=createCanvas(MARGIN*2+w*scale, MARGIN*2+h*scale); c.parent('holder'); noSmooth(); writeOut(); }
+function windowResized(){ const [w,h]=RIG.frame_size; resizeCanvas(MARGIN*2+w*scale, MARGIN*2+h*scale); }
+
+function draw(){
+  const [w,h]=RIG.frame_size; background('#11131a');
+  noStroke(); fill('#171922'); rect(MARGIN,MARGIN,w*scale,h*scale);
+  if(ref){ push(); tint(255,150); image(ref,MARGIN,MARGIN,w*scale,h*scale); pop(); }
+  stroke(255,255,255,28); strokeWeight(1); const step=w>40?4:2;
+  for(let x=0;x<=w;x+=step) line(MARGIN+x*scale,MARGIN,MARGIN+x*scale,MARGIN+h*scale);
+  for(let y=0;y<=h;y+=step) line(MARGIN,MARGIN+y*scale,MARGIN+w*scale,MARGIN+y*scale);
+  fleshed ? drawFlesh() : drawBones();
+  drawJoints();
+  document.getElementById('status').textContent = (playing?'playing · ':'paused · editing ')+ (playing?poseName():editName());
+}
+
+function drawBones(){ stroke('#5ac8ff'); strokeWeight(Math.max(1,scale/5));
+  for(const [a,b] of RIG.bones) line(sx(P(a)[0]),sy(P(a)[1]),sx(P(b)[0]),sy(P(b)[1])); }
+
+function capsule(a,b,wt,col){ strokeCap(ROUND); strokeWeight(wt); stroke(col); line(sx(a[0]),sy(a[1]),sx(b[0]),sy(b[1])); }
+function drawFlesh(){ const j=RIG.poses[poseName()]; const u=scale; const O=BODYCOL.outline;
+  // outline pass (fat), then fill pass (thinner) for a sprite-ish silhouette
+  const limbs=[
+    ['neck','pelvis',2.6,BODYCOL.tunic],
+    ['shoulder_l','elbow_l',1.5,BODYCOL.tunic],['elbow_l','hand_l',1.2,BODYCOL.skin],
+    ['shoulder_r','elbow_r',1.5,BODYCOL.tunic],['elbow_r','hand_r',1.2,BODYCOL.skin],
+    ['neck','shoulder_l',1.6,BODYCOL.tunic],['neck','shoulder_r',1.6,BODYCOL.tunic],
+    ['pelvis','hip_l',1.8,BODYCOL.trousers],['pelvis','hip_r',1.8,BODYCOL.trousers],
+    ['hip_l','knee_l',1.6,BODYCOL.trousers],['knee_l','foot_l',1.5,BODYCOL.boots],
+    ['hip_r','knee_r',1.6,BODYCOL.trousers],['knee_r','foot_r',1.5,BODYCOL.boots]];
+  for(const [a,b,t,c] of limbs) capsule(j[a],j[b],(t+0.7)*u,O);
+  // head outline
+  noStroke(); fill(O); const hr=(2.4)*u; ellipse(sx(j.head[0]),sy(j.head[1]),hr+1.4*u);
+  for(const [a,b,t,c] of limbs) capsule(j[a],j[b],t*u,c);
+  // hair cap + skin face
+  noStroke(); fill(BODYCOL.hair); ellipse(sx(j.head_top[0]),sy((j.head_top[1]+j.head[1])/2),2.4*u);
+  fill(BODYCOL.skin); ellipse(sx(j.head[0]),sy(j.head[1]),2.2*u);
+}
+
+function drawJoints(){ const j=RIG.poses[poseName()];
+  for(const n in j){ const head=n==='head'||n==='head_top';
+    stroke('#0a0a0a'); strokeWeight(1.5); fill(playing?'#888':(head?'#ff6e6e':'#ffd23c'));
+    circle(sx(j[n][0]),sy(j[n][1]),Math.max(7,scale*0.7));
+    noStroke(); fill('#fff'); textSize(10); text(abbr(n),sx(j[n][0])+6,sy(j[n][1])-6); }
+}
+const AB={head_top:'ht',head:'hd',neck:'nk',shoulder_l:'sL',shoulder_r:'sR',elbow_l:'eL',elbow_r:'eR',hand_l:'hL',hand_r:'hR',pelvis:'pv',hip_l:'pL',hip_r:'pR',knee_l:'kL',knee_r:'kR',foot_l:'fL',foot_r:'fR'};
+const abbr=n=>AB[n]||n.slice(0,2);
+
+function mousePressed(){ if(playing) return; const j=RIG.poses[editName()]; let best=null,bd=1e9;
+  for(const n in j){ const d=(sx(j[n][0])-mouseX)**2+(sy(j[n][1])-mouseY)**2; if(d<bd){bd=d;best=n;} }
+  if(bd<=(scale*1.3)**2) dragging=best; }
+function mouseDragged(){ if(!dragging||playing) return; const [w,h]=RIG.frame_size;
+  let nx=Math.round((mouseX-MARGIN)/scale-0.5), ny=Math.round((mouseY-MARGIN)/scale-0.5);
+  nx=Math.max(0,Math.min(w-1,nx)); ny=Math.max(0,Math.min(h-1,ny));
+  RIG.poses[editName()][dragging]=[nx,ny]; writeOut(); }
+function mouseReleased(){ dragging=null; }
+
+function writeOut(){ document.getElementById('out').value=JSON.stringify(RIG,null,2); }
+
+document.querySelectorAll('.dir').forEach(b=>b.onclick=()=>{ dir=b.dataset.d;
+  document.querySelectorAll('.dir').forEach(x=>x.classList.toggle('on',x===b)); });
+document.getElementById('play').onclick=e=>{ playing=!playing; e.target.classList.toggle('on',playing); e.target.textContent=playing?'⏸ pause':'▶ play walk'; };
+document.getElementById('frame').onchange=e=>frameSel=+e.target.value;
+document.getElementById('flesh').onclick=e=>{ fleshed=!fleshed; e.target.textContent='flesh: '+(fleshed?'on':'off'); e.target.classList.toggle('on',fleshed); };
+document.getElementById('scale').oninput=e=>{ scale=+e.target.value; windowResized(); };
+document.getElementById('fps').oninput=e=>fps=+e.target.value;
+document.getElementById('copy').onclick=()=>navigator.clipboard?.writeText(document.getElementById('out').value);
+document.getElementById('dl').onclick=()=>{ const b=new Blob([document.getElementById('out').value],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='rig.json'; a.click(); };
+document.getElementById('file').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>loadImage(r.result,im=>{ ref=im; }); r.readAsDataURL(f); };
+</script>
+</body>
+</html>
