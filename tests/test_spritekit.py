@@ -98,6 +98,36 @@ def test_studio_analyze():
     assert "edge_jitter_px_per_row" in m
 
 
+def test_ramp_hue_shifts():
+    import colorsys
+    from spritekit.ramp import expand, shade
+    from spritekit.palette import hex_to_rgb
+
+    def hue(hx):
+        r, g, b = hex_to_rgb(hx)
+        return colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)[0] * 360
+
+    base = "#b83040"  # crimson
+    sh = shade(base, -1)
+    # shadow must be darker AND hue-shifted (not a flat value change)
+    assert hex_to_rgb(sh) != hex_to_rgb(base)
+    assert abs(((hue(sh) - hue(base) + 180) % 360) - 180) >= 5
+    cols = expand({"bases": {"tunic": base}, "ramps": {"tunic": {"down": 1, "up": 1}}})
+    assert {"tunic", "tunic_shadow", "tunic_light"} <= set(cols)
+
+
+def test_selout_recolors_outline():
+    from spritekit.selout import recolor_outline
+    pal = Palette("t", {"red": "#d04648", "red_shadow": "#7a1f2c"})
+    g = Grid("o", 3, 3, "t",
+             {"o": "outline", "r": "red"},
+             ["ooo", "oro", "ooo"])
+    out = recolor_outline(g, pal)
+    # the outline cells around the red centre become red_shadow
+    assert out.color_at(1, 0) == "red_shadow"
+    assert out.color_at(0, 0) == "red_shadow"
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

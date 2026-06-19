@@ -200,6 +200,36 @@ def cmd_inspect(args) -> int:
     return 0
 
 
+def cmd_recolor_outline(args) -> int:
+    from .selout import recolor_outline
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    out = recolor_outline(grid, palette)
+    out.save(args.out or args.sprite)
+    print(f"recolored outline {args.sprite} -> {args.out or args.sprite}")
+    return 0
+
+
+def cmd_ramp(args) -> int:
+    import json
+    from .ramp import expand
+    config = json.loads(Path(args.config).read_text())
+    kw = {}
+    if args.hue_shift is not None:
+        kw["hue_shift"] = args.hue_shift
+    if args.val_step is not None:
+        kw["val_step"] = args.val_step
+    if args.sat_step is not None:
+        kw["sat_step"] = args.sat_step
+    colors = expand(config, **kw)
+    out = {"name": config.get("name", "ramp"), "colors": colors}
+    Path(args.out).write_text(json.dumps(out, indent=2) + "\n")
+    opaque = [c for c in colors.values() if c]
+    print(f"ramp -> {args.out} ({len(opaque)} colours; hue-shifted ramps)")
+    return 0
+
+
 def cmd_upscale(args) -> int:
     grid = Grid.load(args.sprite)
     up = epx_upscale(grid, times=args.times)
@@ -269,6 +299,20 @@ def build_parser() -> argparse.ArgumentParser:
     up.add_argument("--times", type=int, default=1, help="apply EPX N times (each = x2)")
     up.add_argument("--name")
     up.set_defaults(func=cmd_upscale)
+
+    ro = sub.add_parser("recolor-outline", help="sel-out: retint outline toward bordering material shadow")
+    ro.add_argument("sprite")
+    ro.add_argument("--out")
+    ro.add_argument("--palette")
+    ro.set_defaults(func=cmd_recolor_outline)
+
+    rp = sub.add_parser("ramp", help="generate a hue-shifted palette from a ramp config")
+    rp.add_argument("config")
+    rp.add_argument("--out", required=True)
+    rp.add_argument("--hue-shift", type=float)
+    rp.add_argument("--val-step", type=float)
+    rp.add_argument("--sat-step", type=float)
+    rp.set_defaults(func=cmd_ramp)
 
     gr = sub.add_parser("grade", help="quantified quality scorecard")
     gr.add_argument("sprites", nargs="+")
