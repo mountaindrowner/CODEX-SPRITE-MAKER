@@ -200,6 +200,27 @@ def cmd_inspect(args) -> int:
     return 0
 
 
+def cmd_skeleton(args) -> int:
+    import json as _json
+    from .skeleton import Rig
+    root = Path.cwd()
+    rig = Rig.load(args.rig)
+    pose = args.pose or next(iter(rig.poses))
+    if args.ratios:
+        print(_json.dumps(rig.ratios(pose), indent=2))
+    if args.out:
+        if args.sprite:
+            grid = Grid.load(args.sprite)
+            palette = _resolve_palette(grid, args.palette, root)
+            base = render_grid(grid, palette, args.scale)
+            img = rig.overlay(pose, base, args.scale)
+        else:
+            img = rig.stick(pose, args.scale)
+        img.save(args.out)
+        print(f"skeleton ({pose}) -> {args.out}")
+    return 0
+
+
 def cmd_recolor_outline(args) -> int:
     from .selout import recolor_outline
     root = Path.cwd()
@@ -299,6 +320,16 @@ def build_parser() -> argparse.ArgumentParser:
     up.add_argument("--times", type=int, default=1, help="apply EPX N times (each = x2)")
     up.add_argument("--name")
     up.set_defaults(func=cmd_upscale)
+
+    sk = sub.add_parser("skeleton", help="overlay/draw a skeleton rig; read its proportion ratios")
+    sk.add_argument("--rig", required=True)
+    sk.add_argument("--pose")
+    sk.add_argument("--sprite", help="overlay on this sprite (else draw stick figure)")
+    sk.add_argument("--palette")
+    sk.add_argument("--out")
+    sk.add_argument("--scale", type=int, default=12)
+    sk.add_argument("--ratios", action="store_true", help="print proportion ratios")
+    sk.set_defaults(func=cmd_skeleton)
 
     ro = sub.add_parser("recolor-outline", help="sel-out: retint outline toward bordering material shadow")
     ro.add_argument("sprite")
