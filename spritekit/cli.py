@@ -164,6 +164,42 @@ def cmd_mirror(args) -> int:
     return 0
 
 
+def _load_parts(args):
+    from .studio import load_parts
+    return load_parts(args.parts) if getattr(args, "parts", None) else None
+
+
+def cmd_grade(args) -> int:
+    from .studio import grade_report
+    root = Path.cwd()
+    for spath in args.sprites:
+        grid = Grid.load(spath)
+        palette = _resolve_palette(grid, args.palette, root)
+        print(grade_report(grid, palette, _load_parts(args)))
+        print()
+    return 0
+
+
+def cmd_parts(args) -> int:
+    from .studio import parts_sheet
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    parts_sheet(grid, palette, _load_parts(args), scale=args.scale).save(args.out)
+    print(f"parts sheet -> {args.out}")
+    return 0
+
+
+def cmd_inspect(args) -> int:
+    from .studio import render_labeled
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    render_labeled(grid, palette, scale=args.scale, step=args.step).save(args.out)
+    print(f"labeled view -> {args.out} (grid every {args.step}px)")
+    return 0
+
+
 def cmd_upscale(args) -> int:
     grid = Grid.load(args.sprite)
     up = epx_upscale(grid, times=args.times)
@@ -233,6 +269,28 @@ def build_parser() -> argparse.ArgumentParser:
     up.add_argument("--times", type=int, default=1, help="apply EPX N times (each = x2)")
     up.add_argument("--name")
     up.set_defaults(func=cmd_upscale)
+
+    gr = sub.add_parser("grade", help="quantified quality scorecard")
+    gr.add_argument("sprites", nargs="+")
+    gr.add_argument("--palette")
+    gr.add_argument("--parts", help="parts manifest json")
+    gr.set_defaults(func=cmd_grade)
+
+    pa = sub.add_parser("parts", help="contact sheet isolating each part/material")
+    pa.add_argument("sprite")
+    pa.add_argument("--out", required=True)
+    pa.add_argument("--palette")
+    pa.add_argument("--parts", help="parts manifest json")
+    pa.add_argument("--scale", type=int, default=6)
+    pa.set_defaults(func=cmd_parts)
+
+    ins = sub.add_parser("inspect", help="zoomed render with a labelled coordinate grid")
+    ins.add_argument("sprite")
+    ins.add_argument("--out", required=True)
+    ins.add_argument("--palette")
+    ins.add_argument("--scale", type=int, default=16)
+    ins.add_argument("--step", type=int, default=4)
+    ins.set_defaults(func=cmd_inspect)
 
     g = sub.add_parser("gif", help="assemble an animated GIF")
     g.add_argument("sprites", nargs="+")

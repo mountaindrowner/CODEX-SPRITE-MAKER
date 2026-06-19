@@ -89,6 +89,15 @@ def test_epx_upscale_doubles_and_keeps_colors():
     assert all(su.color_at(x, y) == "red" for y in range(6) for x in range(6))
 
 
+def test_studio_analyze():
+    from spritekit.studio import analyze
+
+    m = analyze(Grid.parse(SPRITE), PAL)
+    assert m["size"] == "4x4"
+    assert m["mirror_symmetry_pct"] == 100.0  # the test dot is symmetric
+    assert "edge_jitter_px_per_row" in m
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

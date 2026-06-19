@@ -24,8 +24,13 @@ python3 -m spritekit.cli import IMAGE --native WxH --grid COLSxROWS --name N --o
 python3 -m spritekit.cli diff   A.sprite B.sprite
 python3 -m spritekit.cli lint   SPRITE... --style style.json
 python3 -m spritekit.cli mirror SPRITE --out OUT.sprite
+python3 -m spritekit.cli upscale SPRITE --out OUT.sprite          # smooth 2x (EPX)
 python3 -m spritekit.cli sheet  FRAME... --out PNG --cols N --coords COORDS.json
 python3 -m spritekit.cli gif    FRAME... --out GIF --fps F
+# Sprite Studio (feedback loop, see docs/studio.md)
+python3 -m spritekit.cli grade   SPRITE... [--parts parts.json]   # quantified scorecard
+python3 -m spritekit.cli parts   SPRITE --out PNG [--parts parts.json]  # isolate each part
+python3 -m spritekit.cli inspect SPRITE --out PNG --step 4        # labelled coordinate grid
 ```
 
 ## Conventions
