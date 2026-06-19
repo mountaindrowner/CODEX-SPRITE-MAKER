@@ -28,6 +28,7 @@ python3 -m spritekit.cli upscale SPRITE --out OUT.sprite          # smooth 2x (E
 # Craft passes (see docs/craft.md) — the pro "look" layer
 python3 -m spritekit.cli ramp BASE.json --out PALETTE.json        # hue-shifted colour ramps
 python3 -m spritekit.cli recolor-outline SPRITE --out OUT.sprite  # sel-out: coloured line work
+python3 -m spritekit.cli shade SPRITE --out OUT.sprite --light top-left  # flat -> lit form (auto-shade)
 # Skeleton-first construction (see docs/skeleton.md)
 python3 -m spritekit.cli skeleton --rig RIG.json --pose P [--sprite S] --out PNG [--ratios]
 python3 -m spritekit.cli skeleton --rig RIG.json --pose P --flesh BASE.sprite --flesh-size 64x96  # bones -> capsule body

@@ -181,6 +181,28 @@ def test_layers_classify_roles_and_override():
     assert "skin" in m["materials"]
 
 
+def test_auto_shade_is_directional():
+    from spritekit.shade import auto_shade
+    pal = Palette("t", {"m": "#808080", "m_shadow": "#404040", "m_light": "#c0c0c0"})
+    # a 7-wide bar of one material; light from the left
+    g = Grid("bar", 7, 1, "t", {"a": "m"}, ["aaaaaaa"])
+    out = auto_shade(g, pal, light="left", highlights=False)
+    names = [out.color_at(x, 0) for x in range(7)]
+    # toward the light (left) is lit, away (right) is shadow, middle keeps base
+    assert names[0] == "m_light"
+    assert names[6] == "m_shadow"
+    assert names[3] == "m"
+    # a material with no ramp colours in the palette stays flat
+    flat = auto_shade(Grid("b", 7, 1, "t", {"a": "m"}, ["aaaaaaa"]),
+                      Palette("t", {"m": "#808080"}), light="left")
+    assert all(flat.color_at(x, 0) == "m" for x in range(7))
+    # existing hand-shading (a non-base tone) is preserved, not overwritten
+    g2 = Grid("h", 5, 1, "t", {"a": "m", "d": "m_shadow"}, ["daaad"])
+    out2 = auto_shade(g2, pal, light="left")
+    assert out2.color_at(0, 0) == "m_shadow"
+    assert out2.color_at(4, 0) == "m_shadow"
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

@@ -299,6 +299,17 @@ def cmd_upscale(args) -> int:
     return 0
 
 
+def cmd_shade(args) -> int:
+    from .shade import auto_shade
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    out = auto_shade(grid, palette, light=args.light, highlights=not args.no_highlights)
+    out.save(args.out or args.sprite)
+    print(f"auto-shaded {args.sprite} -> {args.out or args.sprite} (light {args.light})")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="spritekit", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -358,6 +369,15 @@ def build_parser() -> argparse.ArgumentParser:
     up.add_argument("--times", type=int, default=1, help="apply EPX N times (each = x2)")
     up.add_argument("--name")
     up.set_defaults(func=cmd_upscale)
+
+    sh = sub.add_parser("shade", help="auto-shade flat colour into lit form (directional cel-shading)")
+    sh.add_argument("sprite")
+    sh.add_argument("--out")
+    sh.add_argument("--palette")
+    sh.add_argument("--light", default="top-left",
+                    help="light direction: top, top-left, left, ... (default top-left)")
+    sh.add_argument("--no-highlights", action="store_true", help="skip the highlight dabs")
+    sh.set_defaults(func=cmd_shade)
 
     sk = sub.add_parser("skeleton", help="overlay/draw a skeleton rig; read its proportion ratios")
     sk.add_argument("--rig", required=True)
