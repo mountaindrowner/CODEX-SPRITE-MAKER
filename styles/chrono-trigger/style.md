@@ -13,8 +13,11 @@ trouser shadow value, foot shadow on every frame). Each character carries its ow
 ≤12-colour palette; `lint` validates a sprite against its own declared palette.
 
 ## Canvas & proportions
-- **32×48** pixels per frame. A standard human stands ~32px tall in the body;
-  the extra canvas gives headroom for the **spiky hair** and the drop shadow.
+- **64×96** pixels per frame (a **2× "high-res" tier** — the style was doubled
+  from its native 32×48 to read smoother and less blocky; original CT proportions
+  still apply at half scale). Sprites are produced/refined at 64×96 and the
+  emulated reference is upscaled with `spritekit upscale` (EPX/Scale2x), which
+  rounds diagonal jaggies without inventing colours.
   > *"they're all around 32 pixels tall … the 32 pixel mark, that's sort of the
   > average or the default to start from … your basic non-frog human design."*
 - **Less chibi than Pokémon**: a **smaller head-to-body ratio**, closer to a

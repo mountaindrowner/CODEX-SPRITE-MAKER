@@ -1,8 +1,8 @@
 {
   "name": "chrono-trigger",
   "palette": "palette.json",
-  "frame_size": [32, 48],
-  "max_colors": 12,
+  "frame_size": [64, 96],
+  "max_colors": 18,
   "view": "top-down 3/4",
   "light": "from top",
   "directions": ["down", "up", "left", "right"],

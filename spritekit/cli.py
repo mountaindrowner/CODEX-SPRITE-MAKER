@@ -21,6 +21,7 @@ from .importer import import_sheet
 from .palette import TRANSPARENT, Palette, resolve_palette
 from .render import render_grid, render_to_png
 from .rules import Style
+from .scale import epx_upscale
 from .sheet import save_sheet
 
 
@@ -163,6 +164,16 @@ def cmd_mirror(args) -> int:
     return 0
 
 
+def cmd_upscale(args) -> int:
+    grid = Grid.load(args.sprite)
+    up = epx_upscale(grid, times=args.times)
+    if args.name:
+        up.name = args.name
+    up.save(args.out)
+    print(f"upscaled {args.sprite} -> {args.out} ({grid.width}x{grid.height} -> {up.width}x{up.height})")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="spritekit", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -215,6 +226,13 @@ def build_parser() -> argparse.ArgumentParser:
     mi.add_argument("--out", required=True)
     mi.add_argument("--name")
     mi.set_defaults(func=cmd_mirror)
+
+    up = sub.add_parser("upscale", help="smooth 2x pixel-art upscale (EPX/Scale2x)")
+    up.add_argument("sprite")
+    up.add_argument("--out", required=True)
+    up.add_argument("--times", type=int, default=1, help="apply EPX N times (each = x2)")
+    up.add_argument("--name")
+    up.set_defaults(func=cmd_upscale)
 
     g = sub.add_parser("gif", help="assemble an animated GIF")
     g.add_argument("sprites", nargs="+")

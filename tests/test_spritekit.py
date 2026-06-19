@@ -74,6 +74,21 @@ def test_lint_resolves_grids_own_palette():
     assert style.lint(kael, root=".") == []
 
 
+def test_epx_upscale_doubles_and_keeps_colors():
+    from spritekit.scale import epx_upscale
+
+    g = Grid.parse(SPRITE)
+    up = epx_upscale(g)
+    assert (up.width, up.height) == (g.width * 2, g.height * 2)
+    # EPX never invents colours.
+    assert up.names_used() <= g.names_used()
+    # A uniform region upscales to the same uniform colour (no rounding artifacts).
+    solid = Grid("solid", 3, 3, "t", {"r": "red"}, ["rrr", "rrr", "rrr"])
+    su = epx_upscale(solid)
+    assert (su.width, su.height) == (6, 6)
+    assert all(su.color_at(x, y) == "red" for y in range(6) for x in range(6))
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:
