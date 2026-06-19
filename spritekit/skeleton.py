@@ -145,6 +145,106 @@ class Rig:
         img = Image.new("RGBA", (w * scale, h * scale), bg)
         return self._draw(img, self.poses[pose], scale)
 
+    # -- flesh (skeleton -> base silhouette sprite) ------------------------
+    def flesh(self, pose: str, frame_size: tuple[int, int] | None = None,
+              colors: dict[str, str] | None = None,
+              chars: dict[str, str] | None = None,
+              palette: str = "kael") -> "Grid":
+        """Rasterise a posed skeleton into a colour-named capsule body.
+
+        Returns a :class:`~spritekit.grid.Grid` at ``frame_size`` (defaults to a
+        2x the rig frame). Limbs become rounded capsules, the torso fills the
+        shoulder span, and the head is an ellipse with a hair cap. This is the
+        "flesh the bones" step of the construction loop — a clean base to refine
+        by hand, not finished art.
+        """
+        from .grid import Grid  # local import to avoid a cycle
+
+        rw, rh = self.frame_size
+        tw, th = frame_size or (rw * 2, rh * 2)
+        mul = tw / rw  # rig cell -> target pixels (assumes matched aspect)
+        j = self.poses[pose]
+
+        col = {"outline": "outline", "skin": "skin", "hair": "hair",
+               "tunic": "tunic", "trousers": "trousers", "boots": "boots"}
+        if colors:
+            col.update(colors)
+        ch = {"outline": "o", "skin": "s", "hair": "h",
+              "tunic": "t", "trousers": "r", "boots": "b"}
+        if chars:
+            ch.update(chars)
+
+        # Distinct RGBA sentinels per material so we can read pixels back exactly.
+        SENT = {"outline": (1, 0, 0, 255), "skin": (2, 0, 0, 255),
+                "hair": (3, 0, 0, 255), "tunic": (4, 0, 0, 255),
+                "trousers": (5, 0, 0, 255), "boots": (6, 0, 0, 255)}
+        sent_to_mat = {v: k for k, v in SENT.items()}
+
+        img = Image.new("RGBA", (tw, th), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+
+        def pt(name):
+            return (j[name][0] * mul + mul / 2, j[name][1] * mul + mul / 2)
+
+        def seg(a, b, width, fill):
+            pa, pb = pt(a), pt(b)
+            d.line([pa, pb], fill=fill, width=max(1, int(round(width))))
+            r = width / 2
+            for (x, y) in (pa, pb):
+                d.ellipse([x - r, y - r, x + r, y + r], fill=fill)
+
+        # thicknesses in RIG cells (scaled to target by *mul)
+        shoulder_w = abs(j["shoulder_l"][0] - j["shoulder_r"][0]) or 6
+        T_TORSO = max(shoulder_w, 5)
+        limbs = [
+            ("neck", "pelvis", T_TORSO, "tunic"),
+            ("neck", "shoulder_l", 2.2, "tunic"), ("neck", "shoulder_r", 2.2, "tunic"),
+            ("shoulder_l", "elbow_l", 2.2, "tunic"), ("elbow_l", "hand_l", 1.7, "skin"),
+            ("shoulder_r", "elbow_r", 2.2, "tunic"), ("elbow_r", "hand_r", 1.7, "skin"),
+            ("pelvis", "hip_l", 2.6, "trousers"), ("pelvis", "hip_r", 2.6, "trousers"),
+            ("hip_l", "knee_l", 2.8, "trousers"), ("knee_l", "foot_l", 2.4, "boots"),
+            ("hip_r", "knee_r", 2.8, "trousers"), ("knee_r", "foot_r", 2.4, "boots"),
+        ]
+
+        head_h = max(4, abs(j["head_top"][1] - j["neck"][1]))
+        hw = head_h * 0.82 * mul          # head width (px)
+        hh = head_h * 1.0 * mul           # head height (px)
+        hcx, hcy = pt("head")
+
+        # 1) outline pass: every limb + head fattened, in the outline sentinel
+        for a, b, t, _m in limbs:
+            seg(a, b, t * mul + 2 * mul, SENT["outline"])
+        d.ellipse([hcx - hw / 2 - mul, hcy - hh / 2 - mul,
+                   hcx + hw / 2 + mul, hcy + hh / 2 + mul], fill=SENT["outline"])
+
+        # 2) fill pass: limbs at their true width
+        for a, b, t, m in limbs:
+            seg(a, b, t * mul, SENT[m])
+
+        # 3) head: skin ellipse, then a hair cap over the top ~55%
+        d.ellipse([hcx - hw / 2, hcy - hh / 2, hcx + hw / 2, hcy + hh / 2],
+                  fill=SENT["skin"])
+        htx, hty = pt("head_top")
+        cap_cy = (hty + hcy) / 2
+        d.ellipse([hcx - hw / 2, cap_cy - hh * 0.55, hcx + hw / 2, cap_cy + hh * 0.18],
+                  fill=SENT["hair"])
+
+        # rasterise -> grid of legend chars
+        px = img.load()
+        legend = {ch[m]: col[m] for m in ("outline", "skin", "hair", "tunic", "trousers", "boots")}
+        rows = []
+        for y in range(th):
+            line = []
+            for x in range(tw):
+                r, g, b, a = px[x, y]
+                if a == 0:
+                    line.append(".")
+                else:
+                    mat = sent_to_mat.get((r, g, b, 255), "outline")
+                    line.append(ch[mat])
+            rows.append("".join(line))
+        return Grid(f"{self.name}_{pose}_flesh", tw, th, palette, legend, rows)
+
     # -- proportions -------------------------------------------------------
     def ratios(self, pose: str) -> dict:
         j = self.poses[pose]

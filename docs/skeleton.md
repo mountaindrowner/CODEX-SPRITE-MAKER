@@ -34,10 +34,24 @@ connect them. One rig holds many poses (the walk cycle, each direction).
    spritekit skeleton --rig rig.json --pose down_1 --out stick.png
    ```
 
+The CT rig is **hand-tuned by the human in the loop**: joints exported from the
+rig editor and pasted back, so the poses (`down_0`, `up_0`, `left_0`) sit exactly
+where the artist wants them. `left_0` is a wide, low stance — the most the 32×48
+grid affords for a profile — and reads as an action pose more than a clean walk
+neutral; flesh it and refine, or re-place its legs/arms for a tighter profile.
+
 ## The construction workflow (how new sprites get built on the rig)
 
 1. **Pose** the skeleton (reuse the CT ratios; move joints for the pose/direction).
-2. **Flesh** the bones to a silhouette (limb thickness per material).
+2. **Flesh** the bones to a silhouette — now automated:
+   ```
+   spritekit skeleton --rig rig.json --pose down_0 \
+     --flesh base.sprite --flesh-size 64x96 --flesh-palette kael
+   ```
+   Limbs become rounded capsules, the torso fills the shoulder span, and the head
+   is an ellipse with a hair cap, all in the named materials (`outline, skin, hair,
+   tunic, trousers, boots`). The result is a clean, on-model **base to refine** —
+   not finished art.
 3. **Detail** the silhouette into line-work + features.
 4. **Colour** with hue-shifted ramps (`ramp`) and sel-out (`recolor-outline`).
 5. **Verify** with `grade` / `parts` / `diff`, assemble `sheet` + `gif`.
@@ -48,7 +62,6 @@ consistency the guide describes.
 
 ## Next
 
-- Extract poses for **up / left** (right mirrors left) to complete the rig.
-- A **`flesh`** pass: bones → capsule silhouette at per-limb thickness, to generate
-  a construction base an artist (or Claude) details — closing the loop from
-  skeleton to sprite.
+- Refine each fleshed base into final line-work + shading; re-`mirror` right from left.
+- Tighten `left_0` (or add a dedicated profile-walk pose) so the side view reads
+  as cleanly as down/up.

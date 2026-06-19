@@ -30,6 +30,7 @@ python3 -m spritekit.cli ramp BASE.json --out PALETTE.json        # hue-shifted 
 python3 -m spritekit.cli recolor-outline SPRITE --out OUT.sprite  # sel-out: coloured line work
 # Skeleton-first construction (see docs/skeleton.md)
 python3 -m spritekit.cli skeleton --rig RIG.json --pose P [--sprite S] --out PNG [--ratios]
+python3 -m spritekit.cli skeleton --rig RIG.json --pose P --flesh BASE.sprite --flesh-size 64x96  # bones -> capsule body
 python3 -m spritekit.cli sheet  FRAME... --out PNG --cols N --coords COORDS.json
 python3 -m spritekit.cli gif    FRAME... --out GIF --fps F
 # Sprite Studio (feedback loop, see docs/studio.md)

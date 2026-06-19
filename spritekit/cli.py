@@ -210,6 +210,14 @@ def cmd_skeleton(args) -> int:
         print(_json.dumps(rig.ratios(pose), indent=2))
     if args.table:
         print(rig.joint_table(pose))
+    if getattr(args, "flesh", None):
+        size = None
+        if args.flesh_size:
+            w, h = args.flesh_size.lower().split("x")
+            size = (int(w), int(h))
+        grid = rig.flesh(pose, size, palette=args.flesh_palette)
+        grid.save(args.flesh)
+        print(f"flesh ({pose}) -> {args.flesh} ({grid.width}x{grid.height})")
     if args.out:
         base = None
         if args.sprite:
@@ -338,6 +346,9 @@ def build_parser() -> argparse.ArgumentParser:
     sk.add_argument("--worksheet", action="store_true", help="render a rigging worksheet (grid + labelled joints)")
     sk.add_argument("--ratios", action="store_true", help="print proportion ratios")
     sk.add_argument("--table", action="store_true", help="print the editable joint table")
+    sk.add_argument("--flesh", help="rasterise the pose into a capsule-body .sprite at this path")
+    sk.add_argument("--flesh-size", help="target WxH for --flesh (default 2x rig frame)")
+    sk.add_argument("--flesh-palette", default="kael", help="palette name to declare on the flesh sprite")
     sk.set_defaults(func=cmd_skeleton)
 
     ro = sub.add_parser("recolor-outline", help="sel-out: retint outline toward bordering material shadow")

@@ -128,6 +128,32 @@ def test_selout_recolors_outline():
     assert out.color_at(0, 0) == "red_shadow"
 
 
+def test_skeleton_flesh_base():
+    from spritekit.skeleton import Rig
+    rig = Rig("t", [32, 48], {
+        "down_0": {
+            "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
+            "shoulder_l": [11, 23], "shoulder_r": [19, 23],
+            "elbow_l": [10, 25], "elbow_r": [20, 25],
+            "hand_l": [9, 27], "hand_r": [20, 27],
+            "pelvis": [15, 30],
+            "hip_l": [13, 34], "hip_r": [17, 34],
+            "knee_l": [13, 37], "knee_r": [17, 37],
+            "foot_l": [13, 40], "foot_r": [17, 40],
+        }
+    })
+    g = rig.flesh("down_0", (64, 96), palette="kael")
+    # dims double the rig frame
+    assert (g.width, g.height) == (64, 96)
+    # all the body materials show up, plus transparency around the figure
+    used = g.opaque_names_used()
+    assert {"outline", "skin", "hair", "tunic", "trousers", "boots"} <= used
+    assert "transparent" in g.names_used()
+    # the figure does not fill the whole frame (there is empty margin)
+    filled = sum(ch != "." for row in g.rows for ch in row)
+    assert 0 < filled < g.width * g.height
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:
