@@ -5,3 +5,4 @@ __pycache__/
 sprites/_*.png
 sprites/_*.json
 sprites/_*.gif
+sprites/_*.sprite
