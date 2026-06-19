@@ -154,6 +154,33 @@ def test_skeleton_flesh_base():
     assert 0 < filled < g.width * g.height
 
 
+def test_layers_classify_roles_and_override():
+    from spritekit import layers as L
+    pal = Palette("t", {
+        "outline": "#1a1426", "skin": "#f0c49a", "skin_shadow": "#c77d68",
+        "tunic": "#b83040", "tunic_light": "#e06080", "highlight": "#ffffff",
+    })
+    g = Grid("c", 4, 4, "t",
+             {"o": "outline", "s": "skin", "d": "skin_shadow",
+              "t": "tunic", "l": "tunic_light", "h": "highlight"},
+             ["oooo", "sdtl", "sdtl", "ohho"])
+    info = L.classify(g, pal)
+    assert info["outline"]["role"] == "outline"
+    assert info["skin"]["role"] == "base"
+    assert info["skin_shadow"]["role"] == "shadow"
+    assert info["tunic_light"]["role"] == "light"
+    assert info["highlight"]["role"] == "highlight"
+    # shadow tier is negative, light tier positive
+    assert info["skin_shadow"]["tier"] < 0 < info["tunic_light"]["tier"]
+    # an edited sidecar overrides the auto-guess
+    info2 = L.classify(g, pal, overrides={"skin_shadow": {"role": "light", "tier": 1}})
+    assert info2["skin_shadow"]["role"] == "light"
+    # the model carries materials + per-colour roles for editing
+    m = L.model(g, pal, info)
+    assert m["colors"]["tunic"]["material"] == "tunic"
+    assert "skin" in m["materials"]
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

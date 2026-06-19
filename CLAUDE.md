@@ -37,6 +37,9 @@ python3 -m spritekit.cli gif    FRAME... --out GIF --fps F
 python3 -m spritekit.cli grade   SPRITE... [--parts parts.json]   # quantified scorecard
 python3 -m spritekit.cli parts   SPRITE --out PNG [--parts parts.json]  # isolate each part
 python3 -m spritekit.cli inspect SPRITE --out PNG --step 4        # labelled coordinate grid
+# Layer decomposition (understand construction, see docs/layers.md)
+python3 -m spritekit.cli layers SPRITE --out PNG --json OUT.layers.json  # exploded layers + editable sidecar
+python3 -m spritekit.cli layers SPRITE --apply EDITED.layers.json --out PNG  # honour corrections
 ```
 
 ## Conventions

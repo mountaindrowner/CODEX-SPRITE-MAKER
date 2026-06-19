@@ -200,6 +200,30 @@ def cmd_inspect(args) -> int:
     return 0
 
 
+def cmd_layers(args) -> int:
+    from . import layers as L
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    overrides = L.load_overrides(args.apply) if args.apply else None
+    info = L.classify(grid, palette, overrides)
+    print(L.report(grid, info))
+    m = L.model(grid, palette, info)
+    if args.json:
+        L.write_sidecar(args.json, m)
+        print(f"\nlayer sidecar (edit + re-run with --apply) -> {args.json}")
+    if args.out:
+        rig = pose = None
+        if args.rig:
+            from .skeleton import Rig
+            rig = Rig.load(args.rig)
+            pose = args.pose or next(iter(rig.poses))
+        L.breakdown_sheet(grid, palette, info, scale=args.scale,
+                          rig=rig, pose=pose).save(args.out)
+        print(f"layer breakdown -> {args.out}")
+    return 0
+
+
 def cmd_skeleton(args) -> int:
     import json as _json
     from .skeleton import Rig
@@ -386,6 +410,17 @@ def build_parser() -> argparse.ArgumentParser:
     ins.add_argument("--scale", type=int, default=16)
     ins.add_argument("--step", type=int, default=4)
     ins.set_defaults(func=cmd_inspect)
+
+    ly = sub.add_parser("layers", help="decompose a sprite into its construction layers")
+    ly.add_argument("sprite")
+    ly.add_argument("--out", help="render the exploded layer breakdown to this PNG")
+    ly.add_argument("--json", help="write the editable layer sidecar (the place to correct)")
+    ly.add_argument("--apply", help="apply an edited layer sidecar to override the auto-classification")
+    ly.add_argument("--palette")
+    ly.add_argument("--scale", type=int, default=6)
+    ly.add_argument("--rig", help="optional rig to add a skeleton panel")
+    ly.add_argument("--pose", help="pose name for the skeleton panel")
+    ly.set_defaults(func=cmd_layers)
 
     g = sub.add_parser("gif", help="assemble an animated GIF")
     g.add_argument("sprites", nargs="+")
