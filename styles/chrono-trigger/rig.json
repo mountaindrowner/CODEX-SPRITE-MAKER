@@ -12,14 +12,14 @@
   ],
   "poses": {
     "down_0": {
-      "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
-      "shoulder_l": [11, 23], "shoulder_r": [19, 23],
-      "elbow_l": [10, 25], "elbow_r": [20, 25],
-      "hand_l": [9, 27], "hand_r": [20, 27],
-      "pelvis": [15, 33],
-      "hip_l": [13, 34], "hip_r": [17, 34],
-      "knee_l": [13, 37], "knee_r": [17, 37],
-      "foot_l": [13, 40], "foot_r": [17, 40]
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [18, 24],
+      "elbow_l": [9, 27], "elbow_r": [20, 28],
+      "hand_l": [9, 31], "hand_r": [21, 31],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [17, 34],
+      "knee_l": [11, 37], "knee_r": [18, 37],
+      "foot_l": [11, 40], "foot_r": [18, 40]
     },
     "down_1": {
       "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
@@ -44,22 +44,22 @@
     "up_0": {
       "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
       "shoulder_l": [11, 23], "shoulder_r": [19, 23],
-      "elbow_l": [10, 25], "elbow_r": [20, 25],
-      "hand_l": [9, 27], "hand_r": [20, 27],
-      "pelvis": [15, 33],
-      "hip_l": [13, 34], "hip_r": [17, 34],
-      "knee_l": [13, 37], "knee_r": [17, 37],
-      "foot_l": [13, 40], "foot_r": [17, 40]
+      "elbow_l": [10, 25], "elbow_r": [21, 25],
+      "hand_l": [10, 28], "hand_r": [22, 28],
+      "pelvis": [15, 30],
+      "hip_l": [13, 32], "hip_r": [18, 32],
+      "knee_l": [13, 35], "knee_r": [19, 35],
+      "foot_l": [12, 38], "foot_r": [20, 38]
     },
     "left_0": {
-      "head_top": [14, 13], "head": [13, 18], "neck": [14, 22],
-      "shoulder_l": [13, 23], "shoulder_r": [16, 23],
-      "elbow_l": [12, 26], "elbow_r": [16, 26],
-      "hand_l": [11, 28], "hand_r": [16, 28],
-      "pelvis": [14, 33],
-      "hip_l": [13, 34], "hip_r": [16, 34],
-      "knee_l": [13, 37], "knee_r": [16, 37],
-      "foot_l": [12, 40], "foot_r": [16, 40]
+      "head_top": [14, 13], "head": [15, 18], "neck": [14, 22],
+      "shoulder_l": [13, 23], "shoulder_r": [17, 23],
+      "elbow_l": [12, 28], "elbow_r": [21, 22],
+      "hand_l": [8, 25], "hand_r": [24, 24],
+      "pelvis": [15, 30],
+      "hip_l": [17, 31], "hip_r": [14, 30],
+      "knee_l": [19, 34], "knee_r": [12, 32],
+      "foot_l": [23, 37], "foot_r": [10, 35]
     }
   }
 }
