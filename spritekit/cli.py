@@ -208,11 +208,17 @@ def cmd_skeleton(args) -> int:
     pose = args.pose or next(iter(rig.poses))
     if args.ratios:
         print(_json.dumps(rig.ratios(pose), indent=2))
+    if args.table:
+        print(rig.joint_table(pose))
     if args.out:
+        base = None
         if args.sprite:
             grid = Grid.load(args.sprite)
             palette = _resolve_palette(grid, args.palette, root)
             base = render_grid(grid, palette, args.scale)
+        if args.worksheet and base is not None:
+            img = rig.worksheet(pose, base, args.scale, step=args.step)
+        elif base is not None:
             img = rig.overlay(pose, base, args.scale)
         else:
             img = rig.stick(pose, args.scale)
@@ -328,7 +334,10 @@ def build_parser() -> argparse.ArgumentParser:
     sk.add_argument("--palette")
     sk.add_argument("--out")
     sk.add_argument("--scale", type=int, default=12)
+    sk.add_argument("--step", type=int, default=4, help="coordinate grid spacing (worksheet)")
+    sk.add_argument("--worksheet", action="store_true", help="render a rigging worksheet (grid + labelled joints)")
     sk.add_argument("--ratios", action="store_true", help="print proportion ratios")
+    sk.add_argument("--table", action="store_true", help="print the editable joint table")
     sk.set_defaults(func=cmd_skeleton)
 
     ro = sub.add_parser("recolor-outline", help="sel-out: retint outline toward bordering material shadow")

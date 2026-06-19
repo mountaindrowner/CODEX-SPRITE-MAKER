@@ -32,6 +32,31 @@ BONE_COL = (90, 200, 255, 255)
 JOINT_COL = (255, 210, 60, 255)
 HEAD_COL = (255, 110, 110, 255)
 
+JOINT_ORDER = [
+    "head_top", "head", "neck", "shoulder_l", "shoulder_r",
+    "elbow_l", "elbow_r", "hand_l", "hand_r", "pelvis",
+    "hip_l", "hip_r", "knee_l", "knee_r", "foot_l", "foot_r",
+]
+_ABBR = {
+    "head_top": "ht", "head": "hd", "neck": "nk", "shoulder_l": "sL",
+    "shoulder_r": "sR", "elbow_l": "eL", "elbow_r": "eR", "hand_l": "hL",
+    "hand_r": "hR", "pelvis": "pv", "hip_l": "pL", "hip_r": "pR",
+    "knee_l": "kL", "knee_r": "kR", "foot_l": "fL", "foot_r": "fR",
+}
+
+
+def _abbr(name: str) -> str:
+    return _ABBR.get(name, name[:2])
+
+
+def _col_label(n: int) -> str:
+    s = ""
+    n += 1
+    while n:
+        n, r = divmod(n - 1, 26)
+        s = chr(65 + r) + s
+    return s
+
 
 class Rig:
     def __init__(self, name: str, frame_size: tuple[int, int],
@@ -72,6 +97,48 @@ class Rig:
     def overlay(self, pose: str, base: Image.Image, scale: int) -> Image.Image:
         img = base.convert("RGBA").copy()
         return self._draw(img, self.poses[pose], scale)
+
+    def worksheet(self, pose: str, base: Image.Image, scale: int,
+                  step: int = 4, margin: int = 22) -> Image.Image:
+        """A rigging worksheet: sprite + labelled coordinate grid + the skeleton
+        with each joint named, so a human can read/correct joint positions."""
+        w, h = self.frame_size
+        body = Image.new("RGBA", base.size, (26, 28, 34, 255))
+        body.alpha_composite(base.convert("RGBA"))
+        canvas = Image.new("RGBA", (body.width + margin, body.height + margin),
+                           (14, 14, 18, 255))
+        canvas.paste(body, (margin, margin))
+        d = ImageDraw.Draw(canvas)
+        for cx in range(0, w + 1, step):
+            x = margin + cx * scale
+            d.line([(x, margin), (x, canvas.height)], fill=(255, 255, 255, 45))
+            if cx < w:
+                d.text((x + 2, 5), _col_label(cx), fill=(200, 200, 200, 255))
+        for cy in range(0, h + 1, step):
+            y = margin + cy * scale
+            d.line([(margin, y), (canvas.width, y)], fill=(255, 255, 255, 45))
+            if cy < h:
+                d.text((3, y + 1), str(cy), fill=(200, 200, 200, 255))
+        joints = self.poses[pose]
+        c = lambda p: (margin + p[0] * scale + scale // 2, margin + p[1] * scale + scale // 2)
+        for a, b in self.bones:
+            if a in joints and b in joints:
+                d.line([c(joints[a]), c(joints[b])], fill=BONE_COL, width=max(1, scale // 4))
+        r = max(2, scale // 2)
+        for name, p in joints.items():
+            cx, cy = c(p)
+            col = HEAD_COL if name in ("head", "head_top") else JOINT_COL
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=col, outline=(10, 10, 10, 255))
+            d.text((cx + r + 1, cy - r - 1), _abbr(name), fill=(255, 255, 255, 255))
+        return canvas
+
+    def joint_table(self, pose: str) -> str:
+        lines = [f"{pose}:"]
+        for name in JOINT_ORDER:
+            if name in self.poses[pose]:
+                x, y = self.poses[pose][name]
+                lines.append(f"  {name}: {x},{y}    # {_col_label(x)}{y}")
+        return "\n".join(lines)
 
     def stick(self, pose: str, scale: int, bg=(24, 26, 32, 255)) -> Image.Image:
         w, h = self.frame_size
