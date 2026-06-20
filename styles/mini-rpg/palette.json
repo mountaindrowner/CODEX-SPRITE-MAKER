@@ -1,0 +1,18 @@
+{
+  "name": "mini-rpg",
+  "colors": {
+    "transparent": null,
+    "outline": "#2b211c",
+    "skin": "#e8b48c",
+    "skin_shadow": "#c98a64",
+    "hair": "#8a5a32",
+    "hair_shadow": "#5e3a1e",
+    "tunic": "#6f9a52",
+    "tunic_shadow": "#4d6e38",
+    "pants": "#7a5d40",
+    "pants_shadow": "#54402a",
+    "boots": "#3b2c1d",
+    "belt": "#4a3526",
+    "base": "#1b1620"
+  }
+}
