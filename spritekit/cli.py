@@ -239,7 +239,8 @@ def cmd_skeleton(args) -> int:
         if args.flesh_size:
             w, h = args.flesh_size.lower().split("x")
             size = (int(w), int(h))
-        grid = rig.flesh(pose, size, palette=args.flesh_palette)
+        grid = rig.flesh(pose, size, palette=args.flesh_palette,
+                         girth=getattr(args, "flesh_girth", 1.0))
         grid.save(args.flesh)
         print(f"flesh ({pose}) -> {args.flesh} ({grid.width}x{grid.height})")
     if args.out:
@@ -418,6 +419,7 @@ def build_parser() -> argparse.ArgumentParser:
     sk.add_argument("--flesh", help="rasterise the pose into a capsule-body .sprite at this path")
     sk.add_argument("--flesh-size", help="target WxH for --flesh (default 2x rig frame)")
     sk.add_argument("--flesh-palette", default="kael", help="palette name to declare on the flesh sprite")
+    sk.add_argument("--flesh-girth", type=float, default=1.0, help="fatten torso/limbs for a portly build (1.0 = normal)")
     sk.set_defaults(func=cmd_skeleton)
 
     ro = sub.add_parser("recolor-outline", help="sel-out: retint outline toward bordering material shadow")

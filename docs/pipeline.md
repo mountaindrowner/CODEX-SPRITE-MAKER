@@ -62,7 +62,9 @@ The deterministic spine is runnable as one script:
 > `<style>` style. Read `styles/<style>/style.md` for the locked rules. Choose
 > `mode` (emulate vs generate), the palette (reference hexes for emulate; base
 > hexes per material for generate), the `light` direction, and the `parts` list
-> from the stamp registry (`hair_spikes, headband, eyes, collar, belt, boots`).
+> from the stamp registry — hero parts (`hair_spikes, headband, eyes, collar,
+> belt, boots`) and NPC parts (`hair_short, mustache, apron`). For a generate
+> character also set a `girth` (1.0 normal, ~1.35 portly) for `--flesh-girth`.
 > Map the prompt's materials onto the flesh names: hair, skin, tunic, trousers,
 > boots, plus accessories. Output only the JSON.
 

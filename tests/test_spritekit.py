@@ -242,6 +242,47 @@ def test_feature_stamps_place_parts():
     assert "eye" not in back.opaque_names_used()
 
 
+def test_npc_stamps_and_girth():
+    from spritekit.skeleton import Rig
+    from spritekit.stamps import apply_stamps
+    rig = Rig("t", [32, 48], {
+        "down_0": {
+            "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
+            "shoulder_l": [11, 23], "shoulder_r": [19, 23],
+            "elbow_l": [10, 25], "elbow_r": [20, 25],
+            "hand_l": [9, 27], "hand_r": [20, 27],
+            "pelvis": [15, 30],
+            "hip_l": [13, 34], "hip_r": [17, 34],
+            "knee_l": [13, 37], "knee_r": [17, 37],
+            "foot_l": [13, 40], "foot_r": [17, 40],
+        }
+    })
+    pal = Palette("t", {
+        "outline": "#241c20", "skin": "#e0a878", "hair": "#6b5a48",
+        "tunic": "#5a6e8c", "trousers": "#6b5436", "boots": "#3a2a1a",
+        "apron": "#d8c8a8", "belt": "#3a2a1a", "eye": "#101018",
+    })
+    base = rig.flesh("down_0", (64, 96), palette="t")
+    out = apply_stamps(base, rig, "down_0", pal,
+                       parts=["hair_short", "mustache", "eyes", "apron", "belt", "boots"])
+    after = out.opaque_names_used()
+    assert "apron" in after          # apron panel got placed over the torso
+    assert "hair" in after           # a side/back hair fringe remains after balding
+    # the central crown is balded back to skin
+    hx, hcy = 15 * 2, 18 * 2
+    crown = [out.color_at(x, y) for y in range(13 * 2 + 1, hcy + 1)
+             for x in range(hx - 2, hx + 3)]
+    assert "skin" in crown
+
+    # girth fattens the torso: a wider flesh than the normal build
+    def torso_px(g):
+        return sum(g.color_at(x, y) in ("tunic",)
+                   for y in range(g.height) for x in range(g.width))
+    normal = rig.flesh("down_0", (64, 96), palette="t", girth=1.0)
+    stout = rig.flesh("down_0", (64, 96), palette="t", girth=1.5)
+    assert torso_px(stout) > torso_px(normal)
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

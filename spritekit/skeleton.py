@@ -149,7 +149,7 @@ class Rig:
     def flesh(self, pose: str, frame_size: tuple[int, int] | None = None,
               colors: dict[str, str] | None = None,
               chars: dict[str, str] | None = None,
-              palette: str = "kael") -> "Grid":
+              palette: str = "kael", girth: float = 1.0) -> "Grid":
         """Rasterise a posed skeleton into a colour-named capsule body.
 
         Returns a :class:`~spritekit.grid.Grid` at ``frame_size`` (defaults to a
@@ -193,17 +193,18 @@ class Rig:
             for (x, y) in (pa, pb):
                 d.ellipse([x - r, y - r, x + r, y + r], fill=fill)
 
-        # thicknesses in RIG cells (scaled to target by *mul)
+        # thicknesses in RIG cells (scaled to target by *mul). girth>1 fattens the
+        # torso and limbs for a portly build (the torso most, the legs least).
         shoulder_w = abs(j["shoulder_l"][0] - j["shoulder_r"][0]) or 6
-        T_TORSO = max(shoulder_w, 5)
+        T_TORSO = max(shoulder_w, 5) * girth
         limbs = [
             ("neck", "pelvis", T_TORSO, "tunic"),
             ("neck", "shoulder_l", 2.2, "tunic"), ("neck", "shoulder_r", 2.2, "tunic"),
-            ("shoulder_l", "elbow_l", 2.2, "tunic"), ("elbow_l", "hand_l", 1.7, "skin"),
-            ("shoulder_r", "elbow_r", 2.2, "tunic"), ("elbow_r", "hand_r", 1.7, "skin"),
-            ("pelvis", "hip_l", 2.6, "trousers"), ("pelvis", "hip_r", 2.6, "trousers"),
-            ("hip_l", "knee_l", 2.8, "trousers"), ("knee_l", "foot_l", 2.4, "boots"),
-            ("hip_r", "knee_r", 2.8, "trousers"), ("knee_r", "foot_r", 2.4, "boots"),
+            ("shoulder_l", "elbow_l", 2.2 * girth, "tunic"), ("elbow_l", "hand_l", 1.7 * girth, "skin"),
+            ("shoulder_r", "elbow_r", 2.2 * girth, "tunic"), ("elbow_r", "hand_r", 1.7 * girth, "skin"),
+            ("pelvis", "hip_l", 2.6 * girth, "trousers"), ("pelvis", "hip_r", 2.6 * girth, "trousers"),
+            ("hip_l", "knee_l", 2.8 * girth, "trousers"), ("knee_l", "foot_l", 2.4, "boots"),
+            ("hip_r", "knee_r", 2.8 * girth, "trousers"), ("knee_r", "foot_r", 2.4, "boots"),
         ]
 
         head_h = max(4, abs(j["head_top"][1] - j["neck"][1]))

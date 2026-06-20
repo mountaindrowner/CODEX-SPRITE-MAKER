@@ -165,9 +165,75 @@ def _boots(c: _Canvas, J, view, mul, pal):
             c.set(fx, fy + 1, sole, only_over={"boots", "transparent"})
 
 
+def _hair_short(c: _Canvas, J, view, mul, pal):
+    """Normal, balding hair: bald the central crown back to skin, keep a side/back
+    fringe. The flesh hair cap is the input; we subtract the dome's middle."""
+    skin = _first(pal, "skin") or "skin"
+    hair_names = {"hair", "hair_shadow", "hair_light"}
+    if view == "up":
+        return                                  # back of the head stays fully haired
+    hx, _ = J["head"]
+    _, hty = J["head_top"]
+    _, hcy = J["head"]
+    crown = max(1, round(mul * 1.6))            # half-width of the bald patch
+    for y in range(c.H):
+        for x in range(c.W):
+            if c.name_at(x, y) not in hair_names:
+                continue
+            # bald the upper-central head, but keep the topmost row as a hairline
+            if abs(x - hx) <= crown and hty + 1 <= y <= hcy:
+                c.set(x, y, skin, only_over=hair_names)
+
+
+def _mustache(c: _Canvas, J, view, mul, pal):
+    if view == "up":
+        return
+    hair = _first(pal, "hair", "outline") or "outline"
+    hx, hy = J["head"]
+    y = hy + max(1, round(mul * 1.1))           # below the eyes / nose line
+    half = max(1, round(mul * 1.6))
+    over = {"skin", "skin_shadow", "skin_light"}
+    if view == "left":
+        for x in range(hx - half, hx + 1):      # toward the facing side
+            c.set(x, y, hair, only_over=over)
+    else:
+        for x in range(hx - half, hx + half + 1):
+            c.set(x, y, hair, only_over=over)
+            c.set(x, y + 1, hair, only_over=over) if abs(x - hx) <= half - 1 else None
+
+
+def _apron(c: _Canvas, J, view, mul, pal):
+    apron = _first(pal, "apron")
+    if not apron:
+        return
+    tie = _first(pal, "apron_tie", "belt", "apron") or apron
+    tunic = {"tunic", "tunic_shadow", "tunic_light"}
+    px, py = J["pelvis"]
+    nx, ny = J["neck"]
+    if view == "up":
+        # back: the apron's crossed straps + a waist tie
+        sl, syl = J["shoulder_l"]
+        sr, _ = J["shoulder_r"]
+        for t in range(0, max(2, py - ny)):
+            f = t / max(1, py - ny)
+            c.set(round(sl + (px - sl) * f), ny + t, apron, only_over=tunic)
+            c.set(round(sr + (px - sr) * f), ny + t, apron, only_over=tunic)
+        for x in range(px - max(2, round(mul * 3)), px + max(2, round(mul * 3)) + 1):
+            c.set(x, py, tie, only_over=tunic)
+        return
+    # front (down/left/right): a panel over the lower torso + a waist tie
+    half = max(2, round(mul * 2.6)) if view in ("down",) else max(1, round(mul * 1.2))
+    for y in range(ny + max(1, round(mul * 0.8)), py + max(1, round(mul * 1.2))):
+        for x in range(px - half, px + half + 1):
+            c.set(x, y, apron, only_over=tunic)
+    for x in range(px - half - 1, px + half + 2):
+        c.set(x, py, tie, only_over=tunic | {apron})
+
+
 STAMPS = {
-    "eyes": _eyes, "hair_spikes": _hair_spikes, "headband": _headband,
-    "collar": _collar, "belt": _belt, "boots": _boots,
+    "eyes": _eyes, "hair_spikes": _hair_spikes, "hair_short": _hair_short,
+    "headband": _headband, "mustache": _mustache, "collar": _collar,
+    "apron": _apron, "belt": _belt, "boots": _boots,
 }
 
 
