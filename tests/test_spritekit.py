@@ -203,6 +203,45 @@ def test_auto_shade_is_directional():
     assert out2.color_at(4, 0) == "m_shadow"
 
 
+def test_feature_stamps_place_parts():
+    from spritekit.skeleton import Rig
+    from spritekit.stamps import apply_stamps
+    rig = Rig("t", [32, 48], {
+        "down_0": {
+            "head_top": [15, 13], "head": [15, 18], "neck": [15, 22],
+            "shoulder_l": [11, 23], "shoulder_r": [19, 23],
+            "elbow_l": [10, 25], "elbow_r": [20, 25],
+            "hand_l": [9, 27], "hand_r": [20, 27],
+            "pelvis": [15, 30],
+            "hip_l": [13, 34], "hip_r": [17, 34],
+            "knee_l": [13, 37], "knee_r": [17, 37],
+            "foot_l": [13, 40], "foot_r": [17, 40],
+        }
+    })
+    pal = Palette("t", {
+        "outline": "#1a1426", "skin": "#f0c49a", "hair": "#3a5bd0",
+        "hair_light": "#5aa7f9", "tunic": "#b83040", "trousers": "#555a66",
+        "boots": "#6b4a2e", "trim": "#c8cdd8", "eye": "#101018",
+    })
+    base = rig.flesh("down_0", (64, 96), palette="t")
+    before = base.opaque_names_used()
+    out = apply_stamps(base, rig, "down_0", pal,
+                       parts=["hair_spikes", "eyes", "collar", "belt", "boots"])
+    assert (out.width, out.height) == (64, 96)
+    after = out.opaque_names_used()
+    # stamps introduce features the flat flesh never had
+    assert "eye" in after and "trim" in after
+    assert "eye" not in before
+    # eyes sit on the face: an eye pixel exists within a few cells of the head joint
+    hx, hy = 15 * 2, 18 * 2
+    found = any(out.color_at(x, y) == "eye"
+                for y in range(hy - 3, hy + 3) for x in range(hx - 4, hx + 4))
+    assert found
+    # back view suppresses eyes
+    back = apply_stamps(base, rig, "down_0", pal, parts=["eyes"], view="up")
+    assert "eye" not in back.opaque_names_used()
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

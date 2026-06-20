@@ -310,6 +310,21 @@ def cmd_shade(args) -> int:
     return 0
 
 
+def cmd_stamp(args) -> int:
+    from .skeleton import Rig
+    from .stamps import apply_stamps
+    root = Path.cwd()
+    grid = Grid.load(args.sprite)
+    palette = _resolve_palette(grid, args.palette, root)
+    rig = Rig.load(args.rig)
+    parts = args.parts.split(",") if args.parts else None
+    out = apply_stamps(grid, rig, args.pose, palette, parts=parts, view=args.view)
+    out.save(args.out or args.sprite)
+    print(f"stamped {args.sprite} -> {args.out or args.sprite} "
+          f"(pose {args.pose}, parts {parts or 'default'})")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="spritekit", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -378,6 +393,16 @@ def build_parser() -> argparse.ArgumentParser:
                     help="light direction: top, top-left, left, ... (default top-left)")
     sh.add_argument("--no-highlights", action="store_true", help="skip the highlight dabs")
     sh.set_defaults(func=cmd_shade)
+
+    st = sub.add_parser("stamp", help="place parametric feature parts on a flesh base from the rig")
+    st.add_argument("sprite")
+    st.add_argument("--rig", required=True)
+    st.add_argument("--pose", required=True)
+    st.add_argument("--out")
+    st.add_argument("--palette")
+    st.add_argument("--view", help="front/back/side: down|up|left|right (default: pose prefix)")
+    st.add_argument("--parts", help="comma-separated: hair_spikes,eyes,collar,belt,boots")
+    st.set_defaults(func=cmd_stamp)
 
     sk = sub.add_parser("skeleton", help="overlay/draw a skeleton rig; read its proportion ratios")
     sk.add_argument("--rig", required=True)
