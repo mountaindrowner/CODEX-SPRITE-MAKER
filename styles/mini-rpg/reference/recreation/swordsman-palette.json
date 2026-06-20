@@ -1,0 +1,15 @@
+{
+  "name": "swordsman",
+  "colors": {
+    "transparent": null,
+    "sword": "#a9afba",
+    "hair": "#c2722e",
+    "skin": "#ecd2aa",
+    "shirt": "#ece3cc",
+    "glove": "#9a6630",
+    "belt": "#ddc24c",
+    "sash": "#2d5666",
+    "pants": "#4a3a26",
+    "base": "#14100b"
+  }
+}
