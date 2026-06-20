@@ -1,0 +1,18 @@
+{
+  "name": "crono-gen",
+  "_note": "Emulation palette: Crono's exact recreation hexes, keyed to the flesh material names (trousers = his pants). Only the tones Crono actually uses are present, so auto-shade reproduces his value structure (e.g. no hair_light, no tunic_shadow).",
+  "colors": {
+    "transparent": null,
+    "outline": "#281820",
+    "skin": "#f8c898",
+    "skin_shadow": "#f88068",
+    "hair": "#f88800",
+    "hair_shadow": "#580000",
+    "tunic": "#307070",
+    "tunic_light": "#50d0e8",
+    "trousers": "#a8a870",
+    "boots": "#b80038",
+    "headband": "#b80038",
+    "highlight": "#f8f8f8"
+  }
+}

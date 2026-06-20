@@ -17,6 +17,12 @@ edit directly; `spritekit` renders/imports/validates/assembles them.
    `sheet` (+ coords) and `gif`.
 5. **Lock** the style and move to the next.
 
+## Prompt → pixel pipeline (see `docs/pipeline.md`)
+A documented agent workflow turns a one-line prompt into a finished sprite:
+Designer (prompt→`character.json`) → deterministic spine (`skeleton --flesh` →
+`stamp` → `shade` → `recolor-outline`) → Detailer⇄Critic polish → `mirror`/`sheet`/
+`gif`. Reproducible spine: `bash styles/chrono-trigger/build/pipeline_crono.sh`.
+
 ## CLI
 ```
 python3 -m spritekit.cli render SPRITE... --scale N --out PNG
@@ -32,6 +38,7 @@ python3 -m spritekit.cli shade SPRITE --out OUT.sprite --light top-left  # flat 
 # Skeleton-first construction (see docs/skeleton.md)
 python3 -m spritekit.cli skeleton --rig RIG.json --pose P [--sprite S] --out PNG [--ratios]
 python3 -m spritekit.cli skeleton --rig RIG.json --pose P --flesh BASE.sprite --flesh-size 64x96  # bones -> capsule body
+python3 -m spritekit.cli stamp BASE.sprite --rig RIG.json --pose P --parts hair_spikes,eyes,boots --out OUT.sprite  # parametric features
 python3 -m spritekit.cli sheet  FRAME... --out PNG --cols N --coords COORDS.json
 python3 -m spritekit.cli gif    FRAME... --out GIF --fps F
 # Sprite Studio (feedback loop, see docs/studio.md)

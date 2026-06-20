@@ -114,6 +114,19 @@ def _hair_spikes(c: _Canvas, J, view, mul, pal):
             c.set(x, top - 1 - k, name, only_over={"transparent", "outline"})
 
 
+def _headband(c: _Canvas, J, view, mul, pal):
+    band = _first(pal, "headband", "trim")
+    if not band:
+        return
+    hx, hy = J["head"]
+    _, hty = J["head_top"]
+    y = round((hty + hy) / 2)            # forehead, between crown and face
+    half = max(2, round(mul * 2.6))
+    over = {"skin", "skin_shadow", "skin_light", "hair", "hair_shadow", "hair_light"}
+    for x in range(hx - half, hx + half + 1):
+        c.set(x, y, band, only_over=over)
+
+
 def _collar(c: _Canvas, J, view, mul, pal):
     trim = _first(pal, "trim", "tunic_light")
     if not trim:
@@ -153,7 +166,7 @@ def _boots(c: _Canvas, J, view, mul, pal):
 
 
 STAMPS = {
-    "eyes": _eyes, "hair_spikes": _hair_spikes,
+    "eyes": _eyes, "hair_spikes": _hair_spikes, "headband": _headband,
     "collar": _collar, "belt": _belt, "boots": _boots,
 }
 
