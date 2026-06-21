@@ -12,6 +12,9 @@
     "pants": "#4b4b54",
     "pants_shadow": "#33333a",
     "boots": "#3b2c1d",
+    "belt": "#2a1e14",
+    "steel": "#cfd4dd",
+    "shaft": "#6b4a2e",
     "base": "#1b1620"
   }
 }

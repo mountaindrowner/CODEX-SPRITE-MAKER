@@ -1,0 +1,16 @@
+{
+  "name": "mage",
+  "colors": {
+    "transparent": null,
+    "outline": "#241c20",
+    "skin": "#e8b48c",
+    "skin_shadow": "#c98a64",
+    "hat": "#3a2566",
+    "robe": "#6a3aa0",
+    "robe_shadow": "#4a2876",
+    "trim": "#d8c24a",
+    "staff": "#7a5230",
+    "gem": "#58d0e8",
+    "base": "#1b1620"
+  }
+}

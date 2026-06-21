@@ -19,13 +19,14 @@ from .selout import base_of
 
 # material base-name -> body region. Covers the project's palettes; extend via
 # the region_overrides argument if a character names parts differently.
-HEAD = {"hair", "skin", "eye", "eyes", "face", "ear", "beard", "mustache", "hood"}
+HEAD = {"hair", "skin", "eye", "eyes", "face", "ear", "beard", "mustache",
+        "hood", "hat", "helm", "helmet", "cap"}
 TORSO = {"tunic", "shirt", "robe", "vest", "trim", "belt", "sash", "glove",
          "apron", "collar", "cape", "arm", "hand", "chest", "shoulder", "headband"}
 LEGS = {"pants", "trousers", "leg", "legs", "boots", "boot", "shoe", "skirt", "foot"}
 GROUND = {"base", "shadow", "ground", "drop"}
 WEAPON = {"sword", "spear", "staff", "steel", "shaft", "blade", "bow", "weapon",
-          "axe", "wand", "hilt"}
+          "axe", "wand", "hilt", "gem", "orb", "crystal", "arrow", "quiver"}
 
 
 def region_of(name: str, overrides: dict[str, str] | None = None) -> str:
