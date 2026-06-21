@@ -1,0 +1,10 @@
+{
+  "character": "kael",
+  "parts": {
+    "hair": ["hair", "hair_light", "hair_shadow"],
+    "face": ["skin", "skin_shadow"],
+    "tunic": ["tunic", "tunic_shadow", "trim"],
+    "legs": ["trousers", "trousers_shadow"],
+    "boots": ["boots"]
+  }
+}

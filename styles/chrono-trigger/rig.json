@@ -1,0 +1,105 @@
+{
+  "name": "chrono-trigger-human",
+  "frame_size": [32, 48],
+  "bones": [
+    ["head_top", "head"], ["head", "neck"],
+    ["neck", "shoulder_l"], ["neck", "shoulder_r"], ["neck", "pelvis"],
+    ["shoulder_l", "elbow_l"], ["elbow_l", "hand_l"],
+    ["shoulder_r", "elbow_r"], ["elbow_r", "hand_r"],
+    ["pelvis", "hip_l"], ["pelvis", "hip_r"],
+    ["hip_l", "knee_l"], ["knee_l", "foot_l"],
+    ["hip_r", "knee_r"], ["knee_r", "foot_r"]
+  ],
+  "poses": {
+    "down_0": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 27], "elbow_r": [20, 27],
+      "hand_l": [9, 31], "hand_r": [21, 31],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 37], "knee_r": [19, 37],
+      "foot_l": [11, 40], "foot_r": [19, 40]
+    },
+    "down_1": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 27], "elbow_r": [20, 28],
+      "hand_l": [10, 30], "hand_r": [21, 32],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 37], "knee_r": [19, 36],
+      "foot_l": [11, 40], "foot_r": [19, 38]
+    },
+    "down_2": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 28], "elbow_r": [20, 27],
+      "hand_l": [9, 32], "hand_r": [20, 30],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 36], "knee_r": [19, 37],
+      "foot_l": [11, 38], "foot_r": [19, 40]
+    },
+    "up_0": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 27], "elbow_r": [20, 27],
+      "hand_l": [9, 31], "hand_r": [21, 31],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 37], "knee_r": [19, 37],
+      "foot_l": [11, 40], "foot_r": [19, 40]
+    },
+    "up_1": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 27], "elbow_r": [20, 28],
+      "hand_l": [10, 30], "hand_r": [21, 32],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 37], "knee_r": [19, 36],
+      "foot_l": [11, 40], "foot_r": [19, 38]
+    },
+    "up_2": {
+      "head_top": [15, 15], "head": [15, 20], "neck": [15, 24],
+      "shoulder_l": [11, 24], "shoulder_r": [19, 24],
+      "elbow_l": [10, 28], "elbow_r": [20, 27],
+      "hand_l": [9, 32], "hand_r": [20, 30],
+      "pelvis": [15, 30],
+      "hip_l": [12, 34], "hip_r": [18, 34],
+      "knee_l": [11, 36], "knee_r": [19, 37],
+      "foot_l": [11, 38], "foot_r": [19, 40]
+    },
+    "left_0": {
+      "head_top": [14, 15], "head": [14, 20], "neck": [15, 24],
+      "shoulder_l": [14, 24], "shoulder_r": [16, 24],
+      "elbow_l": [14, 28], "elbow_r": [16, 28],
+      "hand_l": [14, 31], "hand_r": [16, 31],
+      "pelvis": [15, 30],
+      "hip_l": [14, 34], "hip_r": [16, 34],
+      "knee_l": [14, 37], "knee_r": [16, 37],
+      "foot_l": [13, 40], "foot_r": [16, 40]
+    },
+    "left_1": {
+      "head_top": [14, 15], "head": [14, 20], "neck": [15, 24],
+      "shoulder_l": [15, 24], "shoulder_r": [15, 24],
+      "elbow_l": [16, 28], "elbow_r": [14, 28],
+      "hand_l": [16, 31], "hand_r": [13, 31],
+      "pelvis": [15, 30],
+      "hip_l": [14, 34], "hip_r": [16, 34],
+      "knee_l": [13, 37], "knee_r": [17, 37],
+      "foot_l": [12, 40], "foot_r": [18, 39]
+    },
+    "left_2": {
+      "head_top": [14, 15], "head": [14, 20], "neck": [15, 24],
+      "shoulder_l": [15, 24], "shoulder_r": [15, 24],
+      "elbow_l": [14, 28], "elbow_r": [16, 28],
+      "hand_l": [13, 31], "hand_r": [17, 31],
+      "pelvis": [15, 30],
+      "hip_l": [14, 34], "hip_r": [16, 34],
+      "knee_l": [16, 37], "knee_r": [14, 37],
+      "foot_l": [17, 39], "foot_r": [13, 40]
+    }
+  }
+}

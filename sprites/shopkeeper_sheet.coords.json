@@ -1,0 +1,96 @@
+{
+  "frame_size": [
+    64,
+    96
+  ],
+  "cols": 3,
+  "rows": 4,
+  "scale": 1,
+  "padding": 0,
+  "frames": {
+    "chrono-trigger-human_down_0_flesh": {
+      "x": 0,
+      "y": 0,
+      "w": 64,
+      "h": 96,
+      "index": 0
+    },
+    "chrono-trigger-human_down_1_flesh": {
+      "x": 64,
+      "y": 0,
+      "w": 64,
+      "h": 96,
+      "index": 1
+    },
+    "chrono-trigger-human_down_2_flesh": {
+      "x": 128,
+      "y": 0,
+      "w": 64,
+      "h": 96,
+      "index": 2
+    },
+    "chrono-trigger-human_up_0_flesh": {
+      "x": 0,
+      "y": 96,
+      "w": 64,
+      "h": 96,
+      "index": 3
+    },
+    "chrono-trigger-human_up_1_flesh": {
+      "x": 64,
+      "y": 96,
+      "w": 64,
+      "h": 96,
+      "index": 4
+    },
+    "chrono-trigger-human_up_2_flesh": {
+      "x": 128,
+      "y": 96,
+      "w": 64,
+      "h": 96,
+      "index": 5
+    },
+    "chrono-trigger-human_left_0_flesh": {
+      "x": 0,
+      "y": 192,
+      "w": 64,
+      "h": 96,
+      "index": 6
+    },
+    "chrono-trigger-human_left_1_flesh": {
+      "x": 64,
+      "y": 192,
+      "w": 64,
+      "h": 96,
+      "index": 7
+    },
+    "chrono-trigger-human_left_2_flesh": {
+      "x": 128,
+      "y": 192,
+      "w": 64,
+      "h": 96,
+      "index": 8
+    },
+    "shopkeeper_right_0": {
+      "x": 0,
+      "y": 288,
+      "w": 64,
+      "h": 96,
+      "index": 9
+    },
+    "shopkeeper_right_1": {
+      "x": 64,
+      "y": 288,
+      "w": 64,
+      "h": 96,
+      "index": 10
+    },
+    "shopkeeper_right_2": {
+      "x": 128,
+      "y": 288,
+      "w": 64,
+      "h": 96,
+      "index": 11
+    }
+  }
+}

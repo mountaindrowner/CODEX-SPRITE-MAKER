@@ -1,0 +1,10 @@
+{
+  "name": "mini-rpg",
+  "palette": "palette.json",
+  "frame_size": [24, 22],
+  "max_colors": 14,
+  "view": "front",
+  "light": "top-left",
+  "require_outline": false,
+  "notes": "Small 16-bit RPG mini-character (after the reference tiny-RPG sheets): front-facing, ~2.5 heads tall, chunky, outline-light (form comes from a single darker shade per material, not a black keyline), standing on a dark base-shadow oval. Idle is a 2-frame breathing bob played 0,1."
+}

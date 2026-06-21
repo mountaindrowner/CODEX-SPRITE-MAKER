@@ -1,0 +1,20 @@
+{
+  "name": "shopkeeper",
+  "colors": {
+    "transparent": null,
+    "outline": "#241c20",
+    "apron": "#d8c8a8",
+    "belt": "#3a2a1a",
+    "boots": "#4a3420",
+    "highlight": "#f8f8f8",
+    "skin": "#d8a070",
+    "skin_shadow": "#af5a46",
+    "hair": "#6b5a48",
+    "hair_shadow": "#422c25",
+    "tunic": "#4a5e7c",
+    "tunic_shadow": "#282d53",
+    "tunic_light": "#7093a5",
+    "trousers": "#5a4632",
+    "trousers_shadow": "#311c15"
+  }
+}

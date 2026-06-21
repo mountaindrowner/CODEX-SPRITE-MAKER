@@ -1,0 +1,13 @@
+{
+  "name": "shopkeeper",
+  "prompt": "a normal NPC shopkeeper: portly apron merchant, balding with a bushy mustache, plain blue shirt, brown trousers and boots",
+  "style": "chrono-trigger",
+  "mode": "generate",
+  "rig": "rig.json",
+  "frame_size": [64, 96],
+  "palette": "shopkeeper",
+  "light": "top-left",
+  "girth": 1.35,
+  "parts": ["hair_short", "mustache", "eyes", "apron", "belt", "boots"],
+  "_note": "mode=generate: palette comes from shopkeeper-base.json via `ramp`; scored by lint+grade+layers (no reference to diff against)."
+}

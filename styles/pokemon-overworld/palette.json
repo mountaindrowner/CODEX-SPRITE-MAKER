@@ -1,0 +1,22 @@
+{
+  "name": "pokemon-overworld",
+  "colors": {
+    "transparent": null,
+    "outline": "#1b1220",
+    "cap_red": "#cf3a30",
+    "cap_light": "#ec6a5a",
+    "cap_shadow": "#8a2922",
+    "bill": "#d9d2cb",
+    "skin": "#f6cdb0",
+    "skin_shadow": "#cf9a74",
+    "hair": "#6e3c28",
+    "vest": "#3a3a4c",
+    "vest_light": "#5a5a70",
+    "bag_gold": "#e6b22c",
+    "bag_shadow": "#9c7415",
+    "shorts": "#34406a",
+    "shoe": "#b03a2e",
+    "shoe_shadow": "#5a2018",
+    "white": "#dfe9ff"
+  }
+}

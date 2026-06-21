@@ -1,0 +1,20 @@
+{
+  "name": "kael",
+  "flat": {
+    "outline": "#1a1426",
+    "trim": "#c8cdd8",
+    "boots": "#6b4a2e"
+  },
+  "bases": {
+    "hair": "#3a5bd0",
+    "skin": "#f0c49a",
+    "tunic": "#b83040",
+    "trousers": "#555a66"
+  },
+  "ramps": {
+    "hair": { "down": 1, "up": 1 },
+    "skin": { "down": 1 },
+    "tunic": { "down": 1 },
+    "trousers": { "down": 1 }
+  }
+}

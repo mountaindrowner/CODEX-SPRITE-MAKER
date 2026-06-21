@@ -1,0 +1,13 @@
+{
+  "name": "crono",
+  "prompt": "Chrono Trigger hero: spiky orange hair, red headband, teal tunic with light trim, tan pants, red boots",
+  "style": "chrono-trigger",
+  "mode": "emulate",
+  "reference": "reference/recreation/crono_r{r}_c{c}.sprite",
+  "rig": "rig.json",
+  "frame_size": [32, 48],
+  "palette": "crono-gen",
+  "light": "top-left",
+  "parts": ["hair_spikes", "headband", "eyes", "collar", "boots"],
+  "_note": "mode=emulate uses the reference palette directly and is scored by diff vs the reference frames. For an original (mode=generate) the Designer would instead give palette `bases` for the `ramp` tool and score by lint+grade+layers."
+}

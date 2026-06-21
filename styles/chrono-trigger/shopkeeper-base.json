@@ -1,0 +1,22 @@
+{
+  "name": "shopkeeper",
+  "flat": {
+    "outline": "#241c20",
+    "apron": "#d8c8a8",
+    "belt": "#3a2a1a",
+    "boots": "#4a3420",
+    "highlight": "#f8f8f8"
+  },
+  "bases": {
+    "skin": "#d8a070",
+    "hair": "#6b5a48",
+    "tunic": "#4a5e7c",
+    "trousers": "#5a4632"
+  },
+  "ramps": {
+    "skin": { "down": 1 },
+    "hair": { "down": 1 },
+    "tunic": { "down": 1, "up": 1 },
+    "trousers": { "down": 1 }
+  }
+}
