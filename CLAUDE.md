@@ -48,6 +48,8 @@ python3 -m spritekit.cli inspect SPRITE --out PNG --step 4        # labelled coo
 # Layer decomposition (understand construction, see docs/layers.md)
 python3 -m spritekit.cli layers SPRITE --out PNG --json OUT.layers.json  # exploded layers + editable sidecar
 python3 -m spritekit.cli layers SPRITE --apply EDITED.layers.json --out PNG  # honour corrections
+# Self-observation (objective QA against a reference image)
+python3 -m spritekit.cli observe REF.png --grid WxH --palette P --compare MINE.sprite --out DIFF.png  # trace + cell diff
 ```
 
 ## Conventions

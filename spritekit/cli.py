@@ -224,6 +224,28 @@ def cmd_layers(args) -> int:
     return 0
 
 
+def cmd_observe(args) -> int:
+    from . import observe as O
+    root = Path.cwd()
+    cols, rows = (int(v) for v in args.grid.lower().split("x"))
+    frame = tuple(int(v) for v in args.frame.split(",")) if args.frame else None
+    bg = tuple(int(v) for v in args.bg.split(",")) if args.bg else None
+    palette = resolve_palette(args.palette, root) if args.palette else None
+    if palette is None and args.compare:
+        palette = _resolve_palette(Grid.load(args.compare), None, root)
+    ref = O.trace_image(args.image, cols, rows, palette, frame=frame, bg=bg, bg_tol=args.bg_tol)
+    if args.out_ref:
+        ref.save(args.out_ref)
+        print(f"traced reference -> {args.out_ref}")
+    if args.compare:
+        mine = Grid.load(args.compare)
+        print(O.diff_report(ref, mine))
+        if args.out:
+            O.diff_panel(ref, mine, palette, scale=args.scale).save(args.out)
+            print(f"observe panel -> {args.out}")
+    return 0
+
+
 def cmd_skeleton(args) -> int:
     import json as _json
     from .skeleton import Rig
@@ -468,6 +490,19 @@ def build_parser() -> argparse.ArgumentParser:
     ly.add_argument("--rig", help="optional rig to add a skeleton panel")
     ly.add_argument("--pose", help="pose name for the skeleton panel")
     ly.set_defaults(func=cmd_layers)
+
+    ob = sub.add_parser("observe", help="trace a reference image to the grid and diff your work cell-by-cell")
+    ob.add_argument("image")
+    ob.add_argument("--grid", required=True, help="grid size WxH, e.g. 16x16")
+    ob.add_argument("--palette")
+    ob.add_argument("--frame", help="crop one frame: x,y,w,h")
+    ob.add_argument("--compare", help="your .sprite to diff against the traced reference")
+    ob.add_argument("--out", help="render TRACED|MINE|DIFF panel to this PNG")
+    ob.add_argument("--out-ref", dest="out_ref", help="write the traced reference .sprite")
+    ob.add_argument("--bg", help="background colour r,g,b (default: auto from a corner)")
+    ob.add_argument("--bg-tol", dest="bg_tol", type=int, default=46)
+    ob.add_argument("--scale", type=int, default=16)
+    ob.set_defaults(func=cmd_observe)
 
     g = sub.add_parser("gif", help="assemble an animated GIF")
     g.add_argument("sprites", nargs="+")

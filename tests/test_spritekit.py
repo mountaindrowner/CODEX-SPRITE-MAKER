@@ -283,6 +283,24 @@ def test_npc_stamps_and_girth():
     assert torso_px(stout) > torso_px(normal)
 
 
+def test_observe_trace_roundtrip():
+    from spritekit.render import render_grid
+    from spritekit import observe as O
+    g = Grid.parse(SPRITE)                       # 4x4 dot, red/blue on transparent
+    with tempfile.TemporaryDirectory() as td:
+        png = Path(td) / "d.png"
+        render_grid(g, PAL, 12).save(png)        # render big, then trace back
+        ref = O.trace_image(png, 4, 4, PAL)
+        mism, total = O.cell_diff(ref, g)
+        assert total == 16
+        assert len(mism) == 0                    # a clean render traces back exactly
+    # and an introduced error is reported at the right cell
+    bad = Grid("b", 4, 4, "t", {"r": "red", "b": "blue"},
+               ["....", ".rb.", ".bb.", "...."])  # changed one cell vs SPRITE
+    mism2, _ = O.cell_diff(Grid.parse(SPRITE), bad)
+    assert any(m[:2] == (1, 1) for m in mism2)
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:
