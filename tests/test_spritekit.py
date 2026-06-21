@@ -301,6 +301,32 @@ def test_observe_trace_roundtrip():
     assert any(m[:2] == (1, 1) for m in mism2)
 
 
+def test_proportions_measure():
+    from spritekit import proportions as P
+    # head 2 rows (hair), torso 3 (tunic), legs 3 (pants); 6 wide
+    g = Grid("p", 6, 8, "t",
+             {"h": "hair", "t": "tunic", "p": "pants", "w": "sword"},
+             [".hhhh.",
+              ".hhhh.",
+              "tttttt",
+              "tttttt",
+              "tttttt",
+              ".pppp.",
+              ".pppp.",
+              ".pppp."])
+    m = P.measure(g)
+    assert m["head"] == 2 and m["torso"] == 3 and m["legs"] == 3
+    assert m["total"] == 8 and m["heads_tall"] == 4.0
+    # a weapon column sharing no body colour is excluded via region, not counted
+    g2 = Grid("p2", 6, 8, "t",
+              {"h": "hair", "t": "tunic", "p": "pants", "w": "sword"},
+              ["whhhh.", "w.....", "wttttt", "w.....", "wttttt",
+               "w.....", "wpppp.", "w....."])
+    m2 = P.measure(g2)            # the sword column is dropped (weapon region)
+    assert m2["head"] == 2        # band above the first torso row (rows 0-1)
+    assert m2["torso"] == 4 and m2["legs"] == 1
+
+
 def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_")]
     for t in tests:

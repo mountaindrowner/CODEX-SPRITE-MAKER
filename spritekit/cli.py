@@ -224,6 +224,20 @@ def cmd_layers(args) -> int:
     return 0
 
 
+def cmd_proportions(args) -> int:
+    from . import proportions as P
+    grid = Grid.load(args.sprite)
+    ignore = set(args.ignore.split(",")) if args.ignore else set()
+    overrides = {}
+    for spec in (args.region or []):
+        region, _, names = spec.partition(":")
+        for n in names.split(","):
+            if n:
+                overrides[n] = region
+    print(P.report(P.measure(grid, ignore=ignore, overrides=overrides)))
+    return 0
+
+
 def cmd_observe(args) -> int:
     from . import observe as O
     root = Path.cwd()
@@ -503,6 +517,13 @@ def build_parser() -> argparse.ArgumentParser:
     ob.add_argument("--bg-tol", dest="bg_tol", type=int, default=46)
     ob.add_argument("--scale", type=int, default=16)
     ob.set_defaults(func=cmd_observe)
+
+    pr = sub.add_parser("proportions", help="quantify body-plan ratios (head/torso/legs, heads-tall)")
+    pr.add_argument("sprite")
+    pr.add_argument("--ignore", help="comma-separated colour names to drop (e.g. weapons sharing a body colour)")
+    pr.add_argument("--region", action="append",
+                    help="override region membership, e.g. legs:skirt,robe (repeatable)")
+    pr.set_defaults(func=cmd_proportions)
 
     g = sub.add_parser("gif", help="assemble an animated GIF")
     g.add_argument("sprites", nargs="+")
