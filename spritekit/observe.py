@@ -25,7 +25,7 @@ from PIL import Image, ImageDraw
 
 from .grid import TRANSPARENT, TRANSPARENT_CHAR, Grid
 from .importer import _CHAR_POOL, _dist2, downscale_native
-from .palette import Palette
+from .palette import Palette, hex_to_rgb
 from .render import render_grid
 
 
@@ -39,10 +39,10 @@ def trace_image(path: str | Path, cols: int, rows: int, palette: Palette,
     px = native.load()
     if bg is None:                                   # auto: sample a corner cell
         bg = native.getpixel((0, 0))[:3]
-    bg_tol2 = bg_tol * bg_tol
 
     opaque = palette.opaque_names()
     name_to_char = {n: _CHAR_POOL[i] for i, n in enumerate(opaque)}
+    rgb_of = {n: hex_to_rgb(palette.colors[n]) for n in opaque}
     legend = {TRANSPARENT_CHAR: TRANSPARENT}
     legend.update({ch: n for n, ch in name_to_char.items()})
 
@@ -51,10 +51,19 @@ def trace_image(path: str | Path, cols: int, rows: int, palette: Palette,
         line = []
         for x in range(cols):
             c = px[x, y]
-            if c[3] < 128 or _dist2(c[:3], bg) <= bg_tol2:
+            if c[3] < 128:
+                line.append(TRANSPARENT_CHAR)
+                continue
+            rgb = c[:3]
+            # nearest *including the background* as a candidate: a cell is
+            # transparent only when the backdrop is the closest match. This
+            # keeps dark sprite colours (pants, near-black base) that a flat
+            # tolerance ball would wrongly swallow as background.
+            nm = palette.nearest_name(rgb)
+            if _dist2(rgb, bg) <= _dist2(rgb, rgb_of[nm]):
                 line.append(TRANSPARENT_CHAR)
             else:
-                line.append(name_to_char[palette.nearest_name(c[:3])])
+                line.append(name_to_char[nm])
         out_rows.append("".join(line))
     return Grid("traced", cols, rows, palette.name, legend, out_rows)
 
