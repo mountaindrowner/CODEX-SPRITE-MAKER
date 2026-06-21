@@ -1,0 +1,17 @@
+{
+  "name": "fighter",
+  "colors": {
+    "transparent": null,
+    "outline": "#241c20",
+    "skin": "#e8b48c",
+    "skin_shadow": "#c98a64",
+    "hair": "#46362a",
+    "tunic": "#3a6ea5",
+    "tunic_shadow": "#295681",
+    "trim": "#cfd4dd",
+    "pants": "#4b4b54",
+    "pants_shadow": "#33333a",
+    "boots": "#3b2c1d",
+    "base": "#1b1620"
+  }
+}
